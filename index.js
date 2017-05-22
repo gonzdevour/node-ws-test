@@ -22,6 +22,7 @@ wss.on("connection", function(ws) {
     ws.send("got message from server")
     // Broadcast to everyone else.
     wss.clients.forEach(function each(client) {
+      if (client !== ws && client.readyState === WebSocket.OPEN) {
         client.send(data);
       }
     });
