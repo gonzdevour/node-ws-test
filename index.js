@@ -19,7 +19,6 @@ wss.on("connection", function(ws) {
   ws.send("websocket connection open")
 
   ws.on("message", function incoming(data) {
-    ws.send(data)
     // Broadcast to everyone else.
     wss.clients.forEach(function each(client) {
         client.send(data);
