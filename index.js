@@ -20,6 +20,7 @@ wss.on("connection", function(ws) {
   // Request UserList
   wss.clients.forEach(function each(client) {
         client.send("RequestUserList");
+  });
 
   ws.on("message", function incoming(data) {
     // Broadcast to everyone else.
