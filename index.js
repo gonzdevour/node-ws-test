@@ -17,10 +17,6 @@ console.log("websocket server created")
 wss.on("connection", function(ws) {
 
   ws.send("websocket connection open")
-  // Request UserList
-  wss.clients.forEach(function each(client) {
-        client.send("RequestUserList");
-  });
 
   ws.on("message", function incoming(data) {
     // Broadcast to everyone else.
