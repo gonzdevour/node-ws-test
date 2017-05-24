@@ -19,8 +19,6 @@ wss.on("connection", function(ws) {
   var id = setInterval(function() {
     ws.send(JSON.stringify(new Date()), function() {  })
   }, 1000)
-    ws.send({"LTD":"com.playone.chat","Game":"","Time":JSON.stringify(new Date())}, function() {  })
-  }, 1000)
   
   ws.send("websocket connection open")
 
