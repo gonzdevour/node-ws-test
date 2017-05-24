@@ -17,7 +17,7 @@ console.log("websocket server created")
 wss.on("connection", function(ws) {
 
   var id = setInterval(function() {
-    t = { "time": new Date() , "key": "GJ" };
+    t = { "LTD":"com.playone.chat","Game":"","time": new Date() };
     ws.send(JSON.stringify(t), function() {  })
   }, 1000)
   
