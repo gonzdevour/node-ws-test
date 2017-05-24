@@ -17,7 +17,7 @@ console.log("websocket server created")
 wss.on("connection", function(ws) {
 
   var id = setInterval(function() {
-    var t = { "time": new Date() , "key": "GJ }
+    t = { "time": new Date() , "key": "GJ };
     ws.send(JSON.stringify(t), function() {  })
   }, 1000)
   
