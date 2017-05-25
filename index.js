@@ -20,7 +20,7 @@ wss.on("connection", function(ws) {
   clients.push(ws);
   var id = setInterval(function() {
     d = JSON.stringify(new Date()), function() {  }
-    t = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"Time\","+ new Date() +"]"};
+    t = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"Time\","+ d +"]"};
     ws.send(JSON.stringify(t), function() {  })
   }, 1000)
   
