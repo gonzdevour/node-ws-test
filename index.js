@@ -20,15 +20,16 @@ wss.on("connection", function(ws) {
   clients.push(ws);
   var id = setInterval(function() {
     d = JSON.stringify(new Date()), function() {  }
-    t = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"Time\","+ d +"]","Log":"false"};
+    t = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"Time\","+ d +"]","ClientLength":clients.length,"Log":"false"};
     ws.send(JSON.stringify(t), function() {  })
   }, 1000)
   
   ws.send("websocket connection open")
   
   var index = clients.indexOf(ws);
+  i = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"GetID\","+ index +"]"};
   wss.clients.forEach(function each(client) {
-      client.send(JSON.stringify(index), function() {  });
+      client.send(JSON.stringify(i), function() {  });
   });
 
   ws.on("message", function incoming(data) {
@@ -39,6 +40,8 @@ wss.on("connection", function(ws) {
   });
   
   ws.on("close", function() {
+    var index = clients.indexOf(ws);
+    clients.splice(index, 1);
     console.log("websocket connection close")
     clearInterval(id)
   })
