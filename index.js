@@ -19,7 +19,8 @@ var clients = [];
 wss.on("connection", function(ws) {
   clients.push(ws);
   var id = setInterval(function() {
-    t = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"Time\", new Date() ]"};
+    d = JSON.stringify(new Date()), function() {  }
+    t = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"Time\","+ new Date() +"]"};
     ws.send(JSON.stringify(t), function() {  })
   }, 1000)
   
