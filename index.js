@@ -27,7 +27,8 @@ wss.on("connection", function(ws) {
   ws.send("websocket connection open")
   
   var index = clients.indexOf(ws);
-  i = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"GetID\","+ index +"]"};
+  j = JSON.stringify(index), function() {  }
+  i = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"GetID\","+ j +"]"};
   wss.clients.forEach(function each(client) {
       client.send(JSON.stringify(i), function() {  });
   });
