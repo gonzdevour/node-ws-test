@@ -24,13 +24,14 @@ wss.on("connection", function(ws) {
     ws.send(JSON.stringify(t), function() {  })
   }, 1000)
   
-  ws.send("websocket connection open")
+  t = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"SysLog\",\"websocket connection open\"]"};
+  ws.send(JSON.stringify(t), function() {  })
   
   var index = clients.indexOf(ws);
-  j = JSON.stringify(index), function() {  }
-  i = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"GetID\","+ j +"]"};
+  i = JSON.stringify(index), function() {  }
+  t = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"GetID\","+ i +"]"};
   wss.clients.forEach(function each(client) {
-      client.send(JSON.stringify(i), function() {  });
+      client.send(JSON.stringify(t), function() {  });
   });
 
   ws.on("message", function incoming(data) {
