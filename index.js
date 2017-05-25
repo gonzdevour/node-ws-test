@@ -26,10 +26,8 @@ wss.on("connection", function(ws) {
     
   var index = clients.indexOf(ws);
   i = JSON.stringify(index), function() {  }
-  t = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"GetID\","+ i +"]"};
-  wss.clients.forEach(function each(client) {
-      client.send(JSON.stringify(t), function() {  });
-  });
+  j = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"GetID\","+ i +"]"};
+  ws.send(JSON.stringify(j));
 
   ws.on("message", function incoming(data) {
     // Broadcast to everyone else.
