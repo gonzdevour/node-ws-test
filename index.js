@@ -27,7 +27,7 @@ wss.on("connection", function(ws) {
   
   var index = clients.indexOf(ws);
   wss.clients.forEach(function each(client) {
-      client.send(index);
+      client.send(JSON.stringify(index), function() {  });
   });
 
   ws.on("message", function incoming(data) {
