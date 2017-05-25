@@ -26,8 +26,8 @@ wss.on("connection", function(ws) {
     
   var index = clients.indexOf(ws);
   i = JSON.stringify(index), function() {  }
-  t = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"GetID\","+ i +"]"};
-  ws.send(JSON.stringify(t));
+  j = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"GetID\","+ i +"]"};
+  ws.send(JSON.stringify(j));
   });
 
   ws.on("message", function incoming(data) {
