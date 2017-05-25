@@ -14,14 +14,21 @@ console.log("http server listening on %d", port)
 var wss = new WebSocketServer({server: server})
 console.log("websocket server created")
 
-wss.on("connection", function(ws) {
+var clients = [];
 
+wss.on("connection", function(ws) {
+  clients.push(ws);
   var id = setInterval(function() {
     t = { "LTD":"com.playone.chat","Game":"","Time": new Date() };
     ws.send(JSON.stringify(t), function() {  })
   }, 1000)
   
   ws.send("websocket connection open")
+  
+  var index = clients.indexOf(ws);
+  wss.clients.forEach(function each(client) {
+      client.send(index);
+  });
 
   ws.on("message", function incoming(data) {
     // Broadcast to everyone else.
