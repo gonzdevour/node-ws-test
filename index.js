@@ -23,9 +23,13 @@ wss.on("connection", function(ws) {
     t = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"Time\","+ d +"]","ClientLength":clients.length,"Log":"false"};
     ws.send(JSON.stringify(t), function() {  })
   }, 1000)
-  
-  t = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"SysLog\",\"websocket connection open\"]"};
-  ws.send(JSON.stringify(t), function() {  })
+    
+  var index = clients.indexOf(ws);
+  i = JSON.stringify(index), function() {  }
+  t = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"GetID\","+ i +"]"};
+  wss.clients.forEach(function each(client) {
+      client.send(JSON.stringify(t), function() {  });
+  });
 
   ws.on("message", function incoming(data) {
     // Broadcast to everyone else.
