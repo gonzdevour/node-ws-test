@@ -38,9 +38,6 @@ wss.on("connection", function(ws) {
           wss.clients.forEach(function each(client) {
               client.send(g);
           });
-      } else {
-          private = clients[number(r)]
-          private.send(g);
       }
   });
   
