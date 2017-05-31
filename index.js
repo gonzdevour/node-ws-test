@@ -31,7 +31,6 @@ wss.on("connection", function(ws) {
 
   ws.on("message", function incoming(data) {
     var p = JSON.parse(data);
-    var r = JSON.stringify(p['Receiver']);
     var g = JSON.stringify(p['Pkg']);
       if (p['Receiver'] == "Public") {
           // Broadcast to everyone.
@@ -39,7 +38,8 @@ wss.on("connection", function(ws) {
               client.send(g);
           });
       } else {
-          clients[0].send(g);
+          private = clients[number(p['Receiver'])]
+          private.send(g);
       }
   });
   
