@@ -39,7 +39,7 @@ wss.on("connection", function(ws) {
               client.send(g);
           });
       } else {
-          clients[1].send(g);
+          clients[0].send(g);
       }
   });
   
