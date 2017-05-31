@@ -37,11 +37,11 @@ wss.on("connection", function(ws) {
           // Broadcast to everyone.
           wss.clients.forEach(function each(client) {
               client.send(g);
+          });
       } else {
           private = clients[number(r)]
           private.send(g);
       }
-    });
   });
   
   ws.on("close", function() {
