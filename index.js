@@ -36,7 +36,7 @@ wss.on("connection", function(ws) {
       if (r != "Public") {
           // Broadcast to everyone.
           wss.clients.forEach(function each(client) {
-              client.send(g);
+              client.send(r);
           });
       }
   });
