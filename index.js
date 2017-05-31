@@ -31,7 +31,7 @@ wss.on("connection", function(ws) {
 
   ws.on("message", function incoming(data) {
     var j = JSON.parse(data)
-    var m = j['Message']
+    var m = JSON.stringify(j['Message'])
     // Broadcast to everyone else.
     wss.clients.forEach(function each(client) {
         client.send(m);
