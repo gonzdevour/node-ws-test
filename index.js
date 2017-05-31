@@ -31,10 +31,10 @@ wss.on("connection", function(ws) {
 
   ws.on("message", function incoming(data) {
     var j = json.parse(data)
-    var m = j['message']
+    var m = j['Message']
     // Broadcast to everyone else.
     wss.clients.forEach(function each(client) {
-        client.send(j);
+        client.send(m);
     });
   });
   
