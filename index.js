@@ -15,6 +15,7 @@ var wss = new WebSocketServer({server: server})
 console.log("websocket server created")
 
 var clients = [];
+var UserInfo = [];
 
 wss.on("connection", function(ws) {
   clients.push(ws);
@@ -32,15 +33,20 @@ wss.on("connection", function(ws) {
   ws.on("message", function incoming(data) {
     var p = JSON.parse(data);
     var g = JSON.stringify(p['Pkg']);
+    var t = p['Type']
     var r = p['Receiver']
-      if (r == "Public") {
-          // Broadcast to everyone.
-          wss.clients.forEach(function each(client) {
-              client.send(g);
-          });
-      } else {
-          clients[r].send(g);
-      }
+      // Chat Message
+      if (t == "Chat") {
+          if (r == "Public") {
+              // Broadcast to everyone.
+              wss.clients.forEach(function each(client) {
+                  client.send(g);
+              });
+          } else {
+              // Private message.
+              clients[r].send(g);
+          }
+      } 
   });
   
   ws.on("close", function() {
