@@ -32,26 +32,36 @@ wss.on("connection", function(ws) {
 
   ws.on("message", function incoming(data) {
     var p = JSON.parse(data);
-    var g = JSON.stringify(p['Pkg']);
-    var t = p['Type']
-    var r = p['Receiver']
-      // Chat Message
-      if (t == "Chat") {
-          if (r == "Public") {
-              // Broadcast to everyone.
-              wss.clients.forEach(function each(client) {
-                  client.send(g);
-              });
+    var k = p['Pkg'];
+    var g = JSON.stringify(k);
+    var t = p['Type'];
+    var r = p['Receiver'];
+      // Message as command package
+      if (r == "Server") {
+          if (t == "JoinRoom") {
+              // Register UserInfo(JSON) to server.
+              UserInfo[clients.indexOf(ws)] = k
+          } else if (t == "RefreshRoommates") {
+              // Send Roommates UserInfo to me.
+              u = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"Refresh_Roommates\","+ UserInfo +"]"};
+              ws.send(JSON.stringify(u));
           } else {
-              // Private message.
-              clients[r].send(g);
           }
-      } 
+      } else if (r == "Public") {
+          // Broadcast to everyone.
+          wss.clients.forEach(function each(client) {
+              client.send(g);
+          });
+      } else {
+          // Private message.
+          clients[r].send(g);
+      }
   });
   
   ws.on("close", function() {
     var index = clients.indexOf(ws);
     clients.splice(index, 1);
+    UserInfo.splice(index, 1);
     console.log("websocket connection close")
     clearInterval(id)
   })
