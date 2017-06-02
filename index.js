@@ -72,6 +72,13 @@ wss.on("connection", function(ws) {
   
   ws.on("close", function() {
     var index = clients.indexOf(ws);
+    // Broadcast Leaving message to everyone else.
+    y = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"Roommates_Leave\","+ UserInfo[index] +"]"};
+    wss.clients.forEach(function each(client) {
+        if (client !== ws) {
+        client.send(JSON.stringify(y));
+        }
+    });
     clients.splice(index, 1);
     UserInfo.splice(index, 1);
     console.log("websocket connection close")
