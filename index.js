@@ -48,9 +48,6 @@ wss.on("connection", function(ws) {
           // Register my UserInfo(JSON) to server, refresh roommates list for me, and broadcast my join to everyone else.
           if (t == "JoinRoom") {
               var pk = JSON.parse(k);
-              UserInfo[clients.indexOf(ws)] = new User(pk['ID'],pk['Name'],pk['Room']);
-              u = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"Roommates_Refresh\","+ UserInfo +"]"};
-              y = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"Roommates_Join\","+ UserInfo[clients.indexOf(ws)] +"]"};
           } else if (t == "RefreshRoommates") {
               // Send Roommates UserInfo to me.
               u = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"Refresh_Roommates\","+ UserInfo +"]"};
