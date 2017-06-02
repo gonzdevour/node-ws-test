@@ -42,7 +42,9 @@ wss.on("connection", function(ws) {
               // Register UserInfo(JSON) to server.
               UserInfo[clients.indexOf(ws)] = k
               ws.send(JSON.stringify("-start-"));
-              ws.send(JSON.stringify(k['Room']));
+              ws.send(JSON.stringify(k));
+              var a = JSON.parse(k);
+              ws.send(JSON.stringify(a['Room']));
               ws.send(JSON.stringify("-end-"));
               u = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"Refresh_Roommates\","+ UserInfo +"]"};
               y = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"Roommates_Join\","+ UserInfo[clients.indexOf(ws)] +"]"};
