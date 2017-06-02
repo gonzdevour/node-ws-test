@@ -17,13 +17,6 @@ console.log("websocket server created")
 var clients = [];
 var UserInfo = [];
 
-// 定義 User 建構子
-var User = function(Index, Name, Room) {
-  this.Index = Index;
-  this.Name = Name;
-  this.Room = Room;
-};
-
 wss.on("connection", function(ws) {
   clients.push(ws);
   var id = setInterval(function() {
@@ -45,21 +38,21 @@ wss.on("connection", function(ws) {
     var r = p['Receiver'];
       // Message as command package
       if (r == "Server") {
-          // Register my UserInfo(JSON) to server, refresh roommates list for me, and broadcast my join to everyone else.
           if (t == "JoinRoom") {
-              UserInfo[clients.indexOf(ws)] = new User(k['Index'],k['Name'],k['Room']);
-              u = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"Roommates_Refresh\","+ UserInfo +"]"};
+              // Register UserInfo(JSON) to server.
+              UserInfo[clients.indexOf(ws)] = k
+              u = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"Refresh_Roommates\","+ UserInfo +"]"};
               y = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"Roommates_Join\","+ UserInfo[clients.indexOf(ws)] +"]"};
               wss.clients.forEach(function each(client) {
                 // check if the clients are roomates.
-                if (client.readyState === client.OPEN && UserInfo[clients.indexOf(client)].Room === k['Room']) {
+                if (client.readyState === client.OPEN && UserInfo[clients.indexOf(client)]['Room'] === k['Room']) {
                     if (client !== ws) {
                     client.send(JSON.stringify(y));
                     } else {
                     client.send(JSON.stringify(u));
                     }
                 }
-              });             
+              });   
           } else if (t == "RefreshRoommates") {
               // Send Roommates UserInfo to me.
               u = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"Refresh_Roommates\","+ UserInfo +"]"};
@@ -79,13 +72,6 @@ wss.on("connection", function(ws) {
   
   ws.on("close", function() {
     var index = clients.indexOf(ws);
-    // Broadcast Leaving message to everyone else.
-    y = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"Roommates_Leave\","+ UserInfo[index] +"]"};
-    wss.clients.forEach(function each(client) {
-        if (client !== ws) {
-        client.send(JSON.stringify(y));
-        }
-    });
     clients.splice(index, 1);
     UserInfo.splice(index, 1);
     console.log("websocket connection close")
