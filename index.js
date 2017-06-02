@@ -18,8 +18,8 @@ var clients = [];
 var UserInfo = [];
 
 // 定義 User 建構子
-var User = function(ID, Name, Room) {
-  this.ID = ID;
+var User = function(Index, Name, Room) {
+  this.Index = Index;
   this.Name = Name;
   this.Room = Room;
 };
@@ -47,7 +47,8 @@ wss.on("connection", function(ws) {
       if (r == "Server") {
           // Register my UserInfo(JSON) to server, refresh roommates list for me, and broadcast my join to everyone else.
           if (t == "JoinRoom") {
-              UserInfo[clients.indexOf(ws)] = new User(k['ID'],k['Name'],k['Room']);
+              UserInfo[clients.indexOf(ws)] = new User(k['Index'],k['Name'],k['Room']);
+              ws.send("My Name is " + UserInfo[clients.indexOf(ws)].Name));
               u = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"Roommates_Refresh\","+ UserInfo +"]"};
               y = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"Roommates_Join\","+ UserInfo[clients.indexOf(ws)] +"]"};
               wss.clients.forEach(function each(client) {
