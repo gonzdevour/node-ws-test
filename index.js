@@ -33,6 +33,7 @@ wss.on("connection", function(ws) {
   ws.on("message", function incoming(data) {
     var p = JSON.parse(data);
     var k = p['Pkg'];
+    var a = JSON.parse(k);
     var g = JSON.stringify(k);
     var t = p['Type'];
     var r = p['Receiver'];
@@ -41,16 +42,12 @@ wss.on("connection", function(ws) {
           if (t == "JoinRoom") {
               // Register UserInfo(JSON) to server.
               UserInfo[clients.indexOf(ws)] = k
-              ws.send(JSON.stringify("-start-"));
-              ws.send(JSON.stringify(k));
-              var a = JSON.parse(k);
-              ws.send(JSON.stringify(a['Room']));
-              ws.send(JSON.stringify("-end-"));
               u = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"Refresh_Roommates\","+ UserInfo +"]"};
               y = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"Roommates_Join\","+ UserInfo[clients.indexOf(ws)] +"]"};
               wss.clients.forEach(function each(client) {
                 // check if the clients are roomates.
-                if (client.readyState === client.OPEN && UserInfo[clients.indexOf(client)]['Room'] === k['Room']) {
+                var b = JSON.parse(UserInfo[clients.indexOf(client)])
+                if (client.readyState === client.OPEN && b['Room'] === a['Room']) {
                     if (client !== ws) {
                     client.send(JSON.stringify(y));
                     } else {
@@ -67,7 +64,11 @@ wss.on("connection", function(ws) {
       } else if (r == "Public") {
           // Broadcast to everyone.
           wss.clients.forEach(function each(client) {
-              client.send(g);
+              // check if the clients are roomates.
+              var b = JSON.parse(UserInfo[clients.indexOf(client)])
+              if (client.readyState === client.OPEN && b['Room'] === a['Room']) {
+                  client.send(g);
+              }
           });
       } else {
           // Private message.
