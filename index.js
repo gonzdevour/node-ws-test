@@ -74,12 +74,12 @@ wss.on("connection", function(ws) {
               // check if the clients are roomates.
               var b = JSON.parse(UserInfo[clients.indexOf(client)])
               if (client.readyState === client.OPEN && b['Room'] === a['Room']) {
-                  client.send(JSON.stringfy(data));
+                  client.send(JSON.stringfy(p));
               }
           });
       } else {
           // Private message.
-          clients[r].send(JSON.stringfy(data));
+          clients[r].send(JSON.stringfy(p));
       }
   });
   
