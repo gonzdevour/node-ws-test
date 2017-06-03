@@ -55,7 +55,7 @@ wss.on("connection", function(ws) {
                     u = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"Roommates_Join\","+ UserInfo[clients.indexOf(client)] +"]"};
                     ws.send(JSON.stringify(u));
                 }
-              });   
+              });
           } else if (t == "RefreshRoommates") {
               wss.clients.forEach(function each(client) {
                 // check if the clients are roomates.
@@ -65,6 +65,7 @@ wss.on("connection", function(ws) {
                     u = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"Roommates_Join\","+ UserInfo[clients.indexOf(client)] +"]"};
                     ws.send(JSON.stringify(u));
                 }
+              });
           } else {
           }
       } else if (r == "Public") {
