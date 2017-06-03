@@ -42,7 +42,11 @@ wss.on("connection", function(ws) {
           if (t == "JoinRoom") {
               // Register UserInfo(JSON) to server.
               UserInfo[clients.indexOf(ws)] = k
-              y = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"Roommates_Join\",\""+ UserInfo[clients.indexOf(ws)] +"\"]"};
+              // Build FunctionPackage for ws
+              var FnPkg_WS = [];
+              FnPkg_WS[0] = "Roommates_Join"
+              FnPkg_WS[1] = UserInfo[clients.indexOf(ws)]
+              y = { "LTD":"com.playone.chat","Game":"","Pkg":JSON.stringify(FnPkg_WS)};
               wss.clients.forEach(function each(client) {
                 // check if the clients are roomates.
                 var b = JSON.parse(UserInfo[clients.indexOf(client)])
@@ -52,7 +56,11 @@ wss.on("connection", function(ws) {
                     client.send(JSON.stringify(y));
                     } 
                     //tell me who are my roommates(include I)
-                    u = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"Roommates_Join\",\""+ UserInfo[clients.indexOf(client)] +"\"]"};
+                    // Build FunctionPackage
+                    var FnPkg_Client = [];
+                    FnPkg_Client[0] = "Roommates_Join"
+                    FnPkg_Client[1] = UserInfo[clients.indexOf(client)]
+                    u = { "LTD":"com.playone.chat","Game":"","Pkg":JSON.stringify(FnPkg_Client)};
                     ws.send(JSON.stringify(u));
                 }
               });
