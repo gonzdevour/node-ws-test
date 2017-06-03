@@ -70,7 +70,11 @@ wss.on("connection", function(ws) {
                 var b = JSON.parse(UserInfo[clients.indexOf(client)])
                 if (client.readyState === client.OPEN && b['Room'] === a['Room']) {
                     //tell me who are my roommates(include I)
-                    u = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"Roommates_Join\",\""+ UserInfo[clients.indexOf(client)] +"\"]"};
+                    // Build FunctionPackage
+                    var FnPkg_Client = [];
+                    FnPkg_Client[0] = "Roommates_Join"
+                    FnPkg_Client[1] = UserInfo[clients.indexOf(client)]
+                    u = { "LTD":"com.playone.chat","Game":"","Pkg":JSON.stringify(FnPkg_Client)};
                     ws.send(JSON.stringify(u));
                 }
               });
@@ -93,8 +97,12 @@ wss.on("connection", function(ws) {
   
   ws.on("close", function() {
     var index = clients.indexOf(ws);
+    // Build FunctionPackage for ws
+    var FnPkg_WS = [];
+    FnPkg_WS[0] = "Roommates_Leave"
+    FnPkg_WS[1] = UserInfo[index]
+    y = { "LTD":"com.playone.chat","Game":"","Pkg":JSON.stringify(FnPkg_WS)};
     // Broadcast Leaving message to everyone else.
-    y = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"Roommates_Leave\","+ UserInfo[index] +"]"};
     wss.clients.forEach(function each(client) {
         if (client !== ws) {
         client.send(JSON.stringify(y));
