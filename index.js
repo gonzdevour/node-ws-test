@@ -42,20 +42,16 @@ wss.on("connection", function(ws) {
           if (t == "JoinRoom") {
               // Register UserInfo(JSON) to server.
               UserInfo[clients.indexOf(ws)] = k
-              u = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"Refresh_Roommates\","+ UserInfo +"]"};
               y = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"Roommates_Join\","+ UserInfo[clients.indexOf(ws)] +"]"};
               wss.clients.forEach(function each(client) {
                 // check if the clients are roomates.
                 var b = JSON.parse(UserInfo[clients.indexOf(client)])
-                ws.send("-start-");
-                ws.send(JSON.stringify(b['Room']));
-                ws.send(JSON.stringify(a['Room']));
-                ws.send("-end-");
                 if (client.readyState === client.OPEN && b['Room'] === a['Room']) {
                     if (client !== ws) {
                     client.send(JSON.stringify(y));
                     } else {
-                    client.send(JSON.stringify(u));
+                    u = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"Roommates_Join\","+ UserInfo[clients.indexOf(client)] +"]"};
+                    ws.send(JSON.stringify(u));
                     }
                 }
               });   
