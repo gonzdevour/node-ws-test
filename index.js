@@ -47,18 +47,24 @@ wss.on("connection", function(ws) {
                 // check if the clients are roomates.
                 var b = JSON.parse(UserInfo[clients.indexOf(client)])
                 if (client.readyState === client.OPEN && b['Room'] === a['Room']) {
+                    //tell roommates(except I) that I am joining.
                     if (client !== ws) {
                     client.send(JSON.stringify(y));
-                    } else {
+                    } 
+                    //tell me who are my roommates(include I)
                     u = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"Roommates_Join\","+ UserInfo[clients.indexOf(client)] +"]"};
                     ws.send(JSON.stringify(u));
-                    }
                 }
               });   
           } else if (t == "RefreshRoommates") {
-              // Send Roommates UserInfo to me.
-              u = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"Refresh_Roommates\","+ UserInfo +"]"};
-              ws.send(JSON.stringify(u));
+              wss.clients.forEach(function each(client) {
+                // check if the clients are roomates.
+                var b = JSON.parse(UserInfo[clients.indexOf(client)])
+                if (client.readyState === client.OPEN && b['Room'] === a['Room']) {
+                    //tell me who are my roommates(include I)
+                    u = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"Roommates_Join\","+ UserInfo[clients.indexOf(client)] +"]"};
+                    ws.send(JSON.stringify(u));
+                }
           } else {
           }
       } else if (r == "Public") {
