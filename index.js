@@ -79,7 +79,7 @@ wss.on("connection", function(ws) {
           });
       } else {
           // Private message.
-          clients[r].send(JSON.stringfy(p));
+          clients[r].send(p);
       }
   });
   
