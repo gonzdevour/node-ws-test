@@ -42,7 +42,7 @@ wss.on("connection", function(ws) {
           if (t == "JoinRoom") {
               // Register UserInfo(JSON) to server.
               UserInfo[clients.indexOf(ws)] = k
-              y = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"Roommates_Join\","+ string(UserInfo[clients.indexOf(ws)]) +"]"};
+              y = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"Roommates_Join\","+ UserInfo[clients.indexOf(ws)] +"]"};
               wss.clients.forEach(function each(client) {
                 // check if the clients are roomates.
                 var b = JSON.parse(UserInfo[clients.indexOf(client)])
@@ -52,7 +52,7 @@ wss.on("connection", function(ws) {
                     client.send(JSON.stringify(y));
                     } 
                     //tell me who are my roommates(include I)
-                    u = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"Roommates_Join\","+ string(UserInfo[clients.indexOf(client)]) +"]"};
+                    u = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"Roommates_Join\","+ UserInfo[clients.indexOf(client)] +"]"};
                     ws.send(JSON.stringify(u));
                 }
               });
@@ -62,7 +62,7 @@ wss.on("connection", function(ws) {
                 var b = JSON.parse(UserInfo[clients.indexOf(client)])
                 if (client.readyState === client.OPEN && b['Room'] === a['Room']) {
                     //tell me who are my roommates(include I)
-                    u = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"Roommates_Join\","+ string(UserInfo[clients.indexOf(client)]) +"]"};
+                    u = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"Roommates_Join\","+ UserInfo[clients.indexOf(client)] +"]"};
                     ws.send(JSON.stringify(u));
                 }
               });
