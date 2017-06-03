@@ -71,12 +71,12 @@ wss.on("connection", function(ws) {
       } else if (r == "Public") {
           // Broadcast to everyone.
           ws.send(JSON.stringify("-start public-"));
-          ws.send(JSON.stringify(a['Room']));
+          ws.send(a['Room']);
           wss.clients.forEach(function each(client) {
               // check if the clients are roomates.
               var b = JSON.parse(UserInfo[clients.indexOf(client)])
-              ws.send(JSON.stringify(b));
-              ws.send(JSON.stringify(b['Room']));
+              ws.send(b);
+              ws.send(b['Room']);
               if (client.readyState === client.OPEN && b['Room'] === a['Room']) {
                   client.send(JSON.stringfy(p));
               }
