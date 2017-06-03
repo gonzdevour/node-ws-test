@@ -70,18 +70,13 @@ wss.on("connection", function(ws) {
           }
       } else if (r == "Public") {
           // Broadcast to everyone.
-          ws.send(JSON.stringify("-start public-"));
-          ws.send(JSON.stringify(p['Room']));
           wss.clients.forEach(function each(client) {
               // check if the clients are roomates.
               var b = JSON.parse(UserInfo[clients.indexOf(client)])
-              ws.send(JSON.stringify(b));
-              ws.send(JSON.stringify(b['Room']));
               if (client.readyState === client.OPEN && b['Room'] === p['Room']) {
-                  client.send(JSON.stringfy(p));
+                  client.send(JSON.stringify(p));
               }
           });
-          ws.send(JSON.stringify("-end public-"));
       } else {
           // Private message.
           clients[r].send(JSON.stringify(p));
