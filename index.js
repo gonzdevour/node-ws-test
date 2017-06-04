@@ -58,7 +58,6 @@ wss.on("connection", function(ws) {
               } else { 
                   Rooms[m].UserCnt = Rooms[m].UserCnt + 1;
               }
-              ws.send(JSON.stringify(Rooms));
               // Build FunctionPackage for ws
               var FnPkg_WS = [];
               FnPkg_WS[0] = "Roommates_Join"
@@ -121,7 +120,6 @@ wss.on("connection", function(ws) {
     if (Rooms[n].UserCnt == 0) {
     	delete Rooms[n];
     }
-    clients[0].send(JSON.stringify(Rooms));
     // Build FunctionPackage for ws
     var FnPkg_WS = [];
     FnPkg_WS[0] = "Roommates_Leave"
