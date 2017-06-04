@@ -14,6 +14,11 @@ console.log("http server listening on %d", port)
 var wss = new WebSocketServer({server: server})
 console.log("websocket server created")
 
+//key to identify your own server and client.
+var LTD_ID = "com.playone.chat"
+var Game_Name = ""
+
+//simple storage.
 var clients = [];
 var UserInfo = [];
 
@@ -21,13 +26,14 @@ wss.on("connection", function(ws) {
   clients.push(ws);
   var id = setInterval(function() {
     d = JSON.stringify(new Date()), function() {  }
-    t = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"Time\","+ d +"]","ClientLength":clients.length,"Log":"false"};
+    //tell the clients how many users are currently online.
+    t = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":"[\"Time\","+ d +"]","ClientLength":clients.length,"Log":"false"};
     ws.send(JSON.stringify(t), function() {  })
   }, 1000)
     
   var index = clients.indexOf(ws);
   i = JSON.stringify(index), function() {  }
-  j = { "LTD":"com.playone.chat","Game":"","Pkg":"[\"GetID\","+ i +"]"};
+  j = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":"[\"GetID\","+ i +"]"};
   ws.send(JSON.stringify(j));
 
   ws.on("message", function incoming(data) {
@@ -46,7 +52,7 @@ wss.on("connection", function(ws) {
               var FnPkg_WS = [];
               FnPkg_WS[0] = "Roommates_Join"
               FnPkg_WS[1] = UserInfo[clients.indexOf(ws)]
-              y = { "LTD":"com.playone.chat","Game":"","Pkg":JSON.stringify(FnPkg_WS)};
+              y = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg_WS)};
               wss.clients.forEach(function each(client) {
                 // check if the clients are roomates.
                 var b = JSON.parse(UserInfo[clients.indexOf(client)])
@@ -60,7 +66,7 @@ wss.on("connection", function(ws) {
                     var FnPkg_Client = [];
                     FnPkg_Client[0] = "Roommates_Join"
                     FnPkg_Client[1] = UserInfo[clients.indexOf(client)]
-                    u = { "LTD":"com.playone.chat","Game":"","Pkg":JSON.stringify(FnPkg_Client)};
+                    u = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg_Client)};
                     ws.send(JSON.stringify(u));
                 }
               });
@@ -74,7 +80,7 @@ wss.on("connection", function(ws) {
                     var FnPkg_Client = [];
                     FnPkg_Client[0] = "Roommates_Join"
                     FnPkg_Client[1] = UserInfo[clients.indexOf(client)]
-                    u = { "LTD":"com.playone.chat","Game":"","Pkg":JSON.stringify(FnPkg_Client)};
+                    u = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg_Client)};
                     ws.send(JSON.stringify(u));
                 }
               });
@@ -101,7 +107,7 @@ wss.on("connection", function(ws) {
     var FnPkg_WS = [];
     FnPkg_WS[0] = "Roommates_Leave"
     FnPkg_WS[1] = UserInfo[index]
-    y = { "LTD":"com.playone.chat","Game":"","Pkg":JSON.stringify(FnPkg_WS)};
+    y = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg_WS)};
     // Broadcast Leaving message to everyone else.
     wss.clients.forEach(function each(client) {
         if (client !== ws) {
