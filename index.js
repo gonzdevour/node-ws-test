@@ -115,8 +115,7 @@ wss.on("connection", function(ws) {
   ws.on("close", function() {
     var index = clients.indexOf(ws);
     //get room name, check if empty.
-    var i = {};
-    i = UserInfo[index];
+    i = JSON.parse(UserInfo[index]);
     clients[0].send(JSON.stringify("-Close Start-"));
     clients[1].send(JSON.stringify(i));
     var n = i['Room'];
