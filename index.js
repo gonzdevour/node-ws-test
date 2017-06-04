@@ -117,8 +117,12 @@ wss.on("connection", function(ws) {
     //get room name, check if empty.
     var i = {};
     i = UserInfo[index];
+    ws.send(JSON.stringify(-Close Start-));
+    ws.send(JSON.stringify(i));
     var n = i['Room'];
+    ws.send(JSON.stringify(n));
     Rooms[n].UserCnt = Rooms[n].UserCnt - 1;
+    ws.send(JSON.stringify(-Close End-));
     if (Rooms[n].UserCnt == 0) {
     	delete Rooms[n];
     }
