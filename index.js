@@ -52,6 +52,7 @@ wss.on("connection", function(ws) {
               UserInfo[clients.indexOf(ws)] = k
               // Modify Room data.
               if (!Rooms[m]) {
+				          Rooms[m] = {};
                   Rooms[m].Roomname = m;
                   Rooms[m].UserCnt = 1;
               } else { 
