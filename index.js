@@ -115,11 +115,12 @@ wss.on("connection", function(ws) {
   ws.on("close", function() {
     var index = clients.indexOf(ws);
     //get room name, check if empty.
-    var i = UserInfo[index]
-    var n = i['Room']
-    Rooms[n].UserCnt = Rooms[n].UserCnt - 1
-    if (Rooms[n].UserCnt = 0) {
-    	delete Rooms[n]
+    var i = {};
+    i = UserInfo[index];
+    var n = i['Room'];
+    Rooms[n].UserCnt = Rooms[n].UserCnt - 1;
+    if (Rooms[n].UserCnt == 0) {
+    	delete Rooms[n];
     }
     ws.send(JSON.stringify(Rooms));
     // Build FunctionPackage for ws
