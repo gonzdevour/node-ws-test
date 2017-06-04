@@ -80,20 +80,14 @@ wss.on("connection", function(ws) {
                     ws.send(JSON.stringify(u));
                 }
               });
-          } else if (t == "RefreshRoommates") {
-              wss.clients.forEach(function each(client) {
-                // check if the clients are roomates.
-                var b = JSON.parse(UserInfo[clients.indexOf(client)])
-                if (client.readyState === client.OPEN && b['Room'] === a['Room']) {
-                    //tell me who are my roommates(include I)
-                    // Build FunctionPackage
-                    var FnPkg_Client = [];
-                    FnPkg_Client[0] = "Roommates_Join"
-                    FnPkg_Client[1] = UserInfo[clients.indexOf(client)]
-                    u = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg_Client)};
-                    ws.send(JSON.stringify(u));
-                }
-              });
+          } else if (t == "RefreshRoomsList") {
+              // Show me RoomsList
+              // Build FunctionPackage
+              var FnPkg = [];
+              FnPkg[0] = "RefreshRoomsList"
+              FnPkg[1] = Rooms
+              u = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg)};
+              ws.send(JSON.stringify(u));
           } else {
           }
       } else if (r == "Public") {
