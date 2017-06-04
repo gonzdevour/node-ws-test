@@ -52,12 +52,13 @@ wss.on("connection", function(ws) {
               UserInfo[clients.indexOf(ws)] = k
               // Modify Room data.
               if (!Rooms[m]) {
-		  Rooms[m] = {};
+		  						Rooms[m] = {};
                   Rooms[m].Roomname = m;
                   Rooms[m].UserCnt = 1;
               } else { 
                   Rooms[m].UserCnt = Rooms[m].UserCnt + 1;
               }
+	  					ws.send(JSON.stringify(Rooms));
               // Build FunctionPackage for ws
               var FnPkg_WS = [];
               FnPkg_WS[0] = "Roommates_Join"
