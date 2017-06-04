@@ -21,6 +21,7 @@ var Game_Name = ""
 //simple storage.
 var clients = [];
 var UserInfo = [];
+var Rooms = {};
 
 wss.on("connection", function(ws) {
   clients.push(ws);
@@ -48,6 +49,7 @@ wss.on("connection", function(ws) {
           if (t == "JoinRoom") {
               // Register UserInfo(JSON) to server.
               UserInfo[clients.indexOf(ws)] = k
+              // Modify Room data.
               // Build FunctionPackage for ws
               var FnPkg_WS = [];
               FnPkg_WS[0] = "Roommates_Join"
