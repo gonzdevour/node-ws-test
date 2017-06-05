@@ -121,7 +121,9 @@ wss.on("connection", function(ws) {
     y = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg_WS)};
     // Broadcast Leaving message to everyone else.
     wss.clients.forEach(function each(client) {
-        if (client !== ws && client.readyState === client.OPEN) {
+	// check if the clients are roomates.
+	var b = JSON.parse(UserInfo[clients.indexOf(client)])
+        if (client !== ws && client.readyState === client.OPEN && b['Room'] === i['Room']) {
 	  client.send(JSON.stringify(y));
         }
     });
