@@ -157,7 +157,12 @@ wss.on("connection", function(ws) {
     FnPkg_WS[1] = ws.loginpkg
     y = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg_WS)};
     // Broadcast Leaving message to everyone else.
-
+    wss.clients.forEach(function each(client) {
+	// check if the clients are roomates.
+        if (client !== ws && client.readyState === client.OPEN && client.room === ws.room) {
+	  client.send(JSON.stringify(y));
+        }
+    });
     clients.splice(index, 1);
     console.log("websocket connection close")
     clearInterval(id)
