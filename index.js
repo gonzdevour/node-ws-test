@@ -144,6 +144,7 @@ wss.on("connection", function(ws) {
   
   ws.on("close", function() {
     //get room name, check if empty.
+    var index = clients.indexOf(ws);
     var i = JSON.parse(ws.loginpkg);
     var n = i['Room'];
     Rooms[n].UserCnt = Rooms[n].UserCnt - 1;
