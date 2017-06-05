@@ -20,7 +20,6 @@ var Game_Name = ""
 
 //simple storage.
 var clients = [];
-var UserInfo = [];
 var Rooms = {};
 var LoginCnt = 0;
 
@@ -71,12 +70,11 @@ wss.on("connection", function(ws) {
               // Build FunctionPackage for ws
               var FnPkg_WS = [];
               FnPkg_WS[0] = "Roommates_Join"
-              FnPkg_WS[1] = UserInfo[clients.indexOf(ws)]
+              FnPkg_WS[1] = ws.loginpkg
               y = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg_WS)};
               wss.clients.forEach(function each(client) {
                 // check if the clients are roomates.
-                var b = JSON.parse(UserInfo[clients.indexOf(client)])
-                if (client.readyState === client.OPEN && b['Room'] === a['Room']) {
+                if (client.readyState === client.OPEN && client.room === ws.room) {
                     //tell roommates(except I) that I am joining.
                     if (client !== ws) {
                     client.send(JSON.stringify(y));
@@ -85,7 +83,7 @@ wss.on("connection", function(ws) {
                     // Build FunctionPackage
                     var FnPkg_Client = [];
                     FnPkg_Client[0] = "Roommates_Join"
-                    FnPkg_Client[1] = UserInfo[clients.indexOf(client)]
+                    FnPkg_Client[1] = client.loginpkg
                     u = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg_Client)};
                     ws.send(JSON.stringify(u));
                 }
@@ -99,9 +97,8 @@ wss.on("connection", function(ws) {
               u = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg)};
               ws.send(JSON.stringify(u));
           } else if (t == "LeaveRoom") {
-		    var index = clients.indexOf(ws);
 		    //get room name, check if empty.
-		    var i = JSON.parse(UserInfo[index]);
+		    var i = JSON.parse(ws.loginpkg);
 		    var n = i['Room'];
 		    Rooms[n].UserCnt = Rooms[n].UserCnt - 1;
 		    if (Rooms[n].UserCnt == 0) {
@@ -110,13 +107,12 @@ wss.on("connection", function(ws) {
 		    // Build FunctionPackage for ws
 		    var FnPkg_WS = [];
 		    FnPkg_WS[0] = "Roommates_Leave"
-		    FnPkg_WS[1] = UserInfo[index]
+		    FnPkg_WS[1] = ws.loginpkg
 		    y = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg_WS)};
 		    // Broadcast Leaving message to everyone else.
 		    wss.clients.forEach(function each(client) {
 			// check if the clients are roomates.
-			var b = JSON.parse(UserInfo[clients.indexOf(client)])
-			if (client.readyState === client.OPEN && b['Room'] === i['Room']) {
+			if (client.readyState === client.OPEN && client.room === ws.room) {
 			  client.send(JSON.stringify(y));
 			}
 		    });	  	
@@ -126,26 +122,29 @@ wss.on("connection", function(ws) {
           // Broadcast to everyone.
           wss.clients.forEach(function each(client) {
               // check if the clients are roomates.
-              var b = JSON.parse(UserInfo[clients.indexOf(client)])
-              if (client.readyState === client.OPEN && b['Room'] === p['Room']) {
+              if (client.readyState === client.OPEN && client.room === ws.room) {
                   client.send(JSON.stringify(p));
               }
           });
       } else {
           // Private message.
-		if (clients[r].readyState === clients[r].OPEN) {
-			clients[r].send(JSON.stringify(p));
-			if (clients[r] !== ws) {
+          wss.clients.forEach(function each(client) {
+              // check if the clients are roomates.
+              if (client.readyState === client.OPEN) {
+		if (client.userid === r) {
+			client.send(JSON.stringify(p));
+			if (client !== ws) {
 				ws.send(JSON.stringify(p));
 			}
 		}
+              }
+          });
       }
   });
   
   ws.on("close", function() {
-    var index = clients.indexOf(ws);
     //get room name, check if empty.
-    var i = JSON.parse(UserInfo[index]);
+    var i = JSON.parse(ws.loginpkg);
     var n = i['Room'];
     Rooms[n].UserCnt = Rooms[n].UserCnt - 1;
     if (Rooms[n].UserCnt == 0) {
@@ -154,18 +153,16 @@ wss.on("connection", function(ws) {
     // Build FunctionPackage for ws
     var FnPkg_WS = [];
     FnPkg_WS[0] = "Roommates_Leave"
-    FnPkg_WS[1] = UserInfo[index]
+    FnPkg_WS[1] = ws.loginpkg
     y = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg_WS)};
     // Broadcast Leaving message to everyone else.
     wss.clients.forEach(function each(client) {
 	// check if the clients are roomates.
-	var b = JSON.parse(UserInfo[clients.indexOf(client)])
-        if (client !== ws && client.readyState === client.OPEN && b['Room'] === i['Room']) {
+        if (client !== ws && client.readyState === client.OPEN && client.room === ws.room) {
 	  client.send(JSON.stringify(y));
         }
     });
     clients.splice(index, 1);
-    UserInfo.splice(index, 1);
     console.log("websocket connection close")
     clearInterval(id)
   })
