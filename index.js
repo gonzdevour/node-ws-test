@@ -101,6 +101,9 @@ wss.on("connection", function(ws) {
           });
       } else {
           // Private message.
+	      clients[r].send(JSON.stringify(p));
+	      ws.send(JSON.stringify(p));
+	      ws.send(JSON.stringify("-PMClosed-"));
 		if (client[r].readyState === client[r].OPEN) {
 			clients[r].send(JSON.stringify(p));
 			if (client[r] !== ws) {
