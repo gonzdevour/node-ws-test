@@ -33,6 +33,10 @@ wss.on("connection", function(ws) {
   }, 1000)
    
   //tell the client's UserID = LoginCnt
+  LoginCnt = LoginCnt + 1;
+  i = JSON.stringify(LoginCnt), function() {  }
+  j = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":"[\"GetID\","+ i +"]"};
+  ws.send(JSON.stringify(j));
 
   ws.on("message", function incoming(data) {
     var p = JSON.parse(data);
