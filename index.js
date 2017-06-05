@@ -22,6 +22,7 @@ var Game_Name = ""
 var clients = [];
 var UserInfo = [];
 var Rooms = {};
+var LoginCnt = 0;
 
 wss.on("connection", function(ws) {
   clients.push(ws);
@@ -31,9 +32,10 @@ wss.on("connection", function(ws) {
     t = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":"[\"Time\","+ d +"]","ClientLength":clients.length,"Log":"false"};
     ws.send(JSON.stringify(t), function() {  })
   }, 1000)
-    
-  var index = clients.indexOf(ws);
-  i = JSON.stringify(index), function() {  }
+   
+  //tell the client's UserID = LoginCnt
+  LoginCnt = LoginCnt + 1;
+  i = JSON.stringify(LoginCnt), function() {  }
   j = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":"[\"GetID\","+ i +"]"};
   ws.send(JSON.stringify(j));
 
@@ -45,11 +47,19 @@ wss.on("connection", function(ws) {
     var t = p['Type'];
     var r = p['Receiver'];
     var m = p['Room'];
+    var d = p['UserID']
       // Message as command package
       if (r == "Server") {
           if (t == "JoinRoom") {
-              // Register UserInfo(JSON) to server.
-              UserInfo[clients.indexOf(ws)] = k
+              // set properties of my ws
+		  ws.send(JSON.stringify("-ws set properties start-"));
+              ws.loginpkg = k
+	      ws.userid = d
+	      ws.room = m
+		  ws.send(JSON.stringify(ws.loginpkg));
+		  ws.send(JSON.stringify(ws.userid));
+		  ws.send(JSON.stringify(ws.room));
+		  ws.send(JSON.stringify("-ws set properties end-"));
               // Modify Room data.
               if (!Rooms[m]) {
 		  Rooms[m] = {};
