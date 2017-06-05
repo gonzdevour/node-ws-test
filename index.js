@@ -106,7 +106,7 @@ wss.on("connection", function(ws) {
 		    wss.clients.forEach(function each(client) {
 			// check if the clients are roomates.
 			var b = JSON.parse(UserInfo[clients.indexOf(client)])
-			if (client !== ws && client.readyState === client.OPEN && b['Room'] === i['Room']) {
+			if (client.readyState === client.OPEN && b['Room'] === i['Room']) {
 			  client.send(JSON.stringify(y));
 			}
 		    });	  	
