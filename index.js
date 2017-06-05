@@ -88,8 +88,30 @@ wss.on("connection", function(ws) {
               FnPkg[1] = Rooms
               u = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg)};
               ws.send(JSON.stringify(u));
+          } else if (t == "LeaveRoom") {
+		    var index = clients.indexOf(ws);
+		    //get room name, check if empty.
+		    var i = JSON.parse(UserInfo[index]);
+		    var n = i['Room'];
+		    Rooms[n].UserCnt = Rooms[n].UserCnt - 1;
+		    if (Rooms[n].UserCnt == 0) {
+			delete Rooms[n];
+		    }
+		    // Build FunctionPackage for ws
+		    var FnPkg_WS = [];
+		    FnPkg_WS[0] = "Roommates_Leave"
+		    FnPkg_WS[1] = UserInfo[index]
+		    y = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg_WS)};
+		    // Broadcast Leaving message to everyone else.
+		    wss.clients.forEach(function each(client) {
+			// check if the clients are roomates.
+			var b = JSON.parse(UserInfo[clients.indexOf(client)])
+			if (client !== ws && client.readyState === client.OPEN && b['Room'] === i['Room']) {
+			  client.send(JSON.stringify(y));
+			}
+		    });	  	
           } else {
-          }
+	  }
       } else if (r == "Public") {
           // Broadcast to everyone.
           wss.clients.forEach(function each(client) {
