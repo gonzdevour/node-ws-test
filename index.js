@@ -144,6 +144,26 @@ wss.on("connection", function(ws) {
   
   ws.on("close", function() {
     //get room name, check if empty.
-
+    var index = clients.indexOf(ws);
+    var n = ws.room;
+    Rooms[n].UserCnt = Rooms[n].UserCnt - 1;
+    if (Rooms[n].UserCnt == 0) {
+    	delete Rooms[n];
+    }
+    // Build FunctionPackage for ws
+    var FnPkg_WS = [];
+    FnPkg_WS[0] = "Roommates_Leave"
+    FnPkg_WS[1] = ws.loginpkg
+    y = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg_WS)};
+    // Broadcast Leaving message to everyone else.
+    wss.clients.forEach(function each(client) {
+	// check if the clients are roomates.
+        if (client !== ws && client.readyState === client.OPEN && client.room === ws.room) {
+	  client.send(JSON.stringify(y));
+        }
+    });
+    clients.splice(index, 1);
+    console.log("websocket connection close")
+    clearInterval(id)
   })
 })
