@@ -110,7 +110,8 @@ wss.on("connection", function(ws) {
 			if (client.readyState === client.OPEN && client.room === ws.room) {
 			  client.send(JSON.stringify(y));
 			}
-		    });	  	
+		    });
+		    ws.room = null
           } else {
 	  }
       } else if (r == "Public") {
