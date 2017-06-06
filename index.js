@@ -54,13 +54,11 @@ wss.on("connection", function(ws) {
               ws.loginpkg = k
 	      ws.userid = d
 	      ws.room = m
-ws.send(JSON.stringify("set properties of my ws"));
               // Modify Room data.
               if (!Rooms[m]) {
 		  Rooms[m] = {};
                   Rooms[m].Roomname = m;
                   Rooms[m].UserCnt = 1;
-ws.send(JSON.stringify("start push ws"));
 		  Rooms[m].wsgroup = [];
 		  Rooms[m].wsgroup.push(ws);
               } else { 
@@ -72,7 +70,6 @@ ws.send(JSON.stringify("start push ws"));
               FnPkg_WS[0] = "Roommates_Join"
               FnPkg_WS[1] = ws.loginpkg
               y = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg_WS)};
-ws.send(JSON.stringify("start for each"));
               Rooms[m].wsgroup.forEach(function each(client) {
                 if (client.readyState === client.OPEN) {
                     //tell roommates(except I) that I am joining.
@@ -111,6 +108,9 @@ ws.send(JSON.stringify("start for each"));
 			  client.send(JSON.stringify(y));
 			}
 		    });
+		    // remove my ws from roomgroup 
+		    var indexR = Rooms[n].wsgroup.indexOf(ws);
+		    Rooms[n].wsgroup.splice(indexR, 1);
 		    //get room name, check if empty.
 		    Rooms[n].UserCnt = Rooms[n].UserCnt - 1;
 		    if (Rooms[n].UserCnt == 0) {
