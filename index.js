@@ -73,7 +73,7 @@ ws.send(JSON.stringify("start push ws"));
               FnPkg_WS[1] = ws.loginpkg
               y = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg_WS)};
 ws.send(JSON.stringify("start for each"));
-              wss.Rooms[m].wsgroup.forEach(function each(client) {
+              Rooms[m].wsgroup.forEach(function each(client) {
                 if (client.readyState === client.OPEN) {
                     //tell roommates(except I) that I am joining.
                     if (client !== ws) {
