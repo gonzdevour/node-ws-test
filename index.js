@@ -54,11 +54,13 @@ wss.on("connection", function(ws) {
               ws.loginpkg = k
 	      ws.userid = d
 	      ws.room = m
+ws.send(JSON.stringify("set properties of my ws"));
               // Modify Room data.
               if (!Rooms[m]) {
 		  Rooms[m] = {};
                   Rooms[m].Roomname = m;
                   Rooms[m].UserCnt = 1;
+ws.send(JSON.stringify("start push ws"));
 		  Rooms[m].wsgroup = [];
 		  Rooms[m].wsgroup.push(ws);
               } else { 
@@ -70,6 +72,7 @@ wss.on("connection", function(ws) {
               FnPkg_WS[0] = "Roommates_Join"
               FnPkg_WS[1] = ws.loginpkg
               y = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg_WS)};
+ws.send(JSON.stringify("start for each"));
               wss.Rooms[m].wsgroup.forEach(function each(client) {
                 if (client.readyState === client.OPEN) {
                     //tell roommates(except I) that I am joining.
