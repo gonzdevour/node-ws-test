@@ -59,7 +59,10 @@ wss.on("connection", function(ws) {
 		  Rooms[m] = {};
                   Rooms[m].Roomname = m;
                   Rooms[m].UserCnt = 1;
+		  Rooms[m].wsgroup = [];
+		  Rooms[m].wsgroup.push(ws);
               } else { 
+		  Rooms[m].wsgroup.push(ws);
                   Rooms[m].UserCnt = Rooms[m].UserCnt + 1;
               }
               // Build FunctionPackage for ws
@@ -67,9 +70,8 @@ wss.on("connection", function(ws) {
               FnPkg_WS[0] = "Roommates_Join"
               FnPkg_WS[1] = ws.loginpkg
               y = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg_WS)};
-              wss.clients.forEach(function each(client) {
-                // check if the clients are roomates.
-                if (client.readyState === client.OPEN && client.room === ws.room) {
+              wss.Rooms[m].wsgroup.forEach(function each(client) {
+                if (client.readyState === client.OPEN) {
                     //tell roommates(except I) that I am joining.
                     if (client !== ws) {
                     client.send(JSON.stringify(y));
@@ -92,29 +94,29 @@ wss.on("connection", function(ws) {
               u = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg)};
               ws.send(JSON.stringify(u));
           } else if (t == "LeaveRoom") {
-		    //get room name, check if empty.
 		    var i = JSON.parse(ws.loginpkg);
 		    var n = i['Room'];
-		    Rooms[n].UserCnt = Rooms[n].UserCnt - 1;
-		    if (Rooms[n].UserCnt == 0) {
-			delete Rooms[n];
-		    }
 		    // Build FunctionPackage for ws
 		    var FnPkg_WS = [];
 		    FnPkg_WS[0] = "Roommates_Leave"
 		    FnPkg_WS[1] = ws.loginpkg
 		    y = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg_WS)};
 		    // Broadcast Leaving message to everyone else.
-		    wss.clients.forEach(function each(client) {
+		    wss.Rooms[n].wsgroup.forEach(function each(client) {
 			// check if the clients are roomates.
 			if (client.readyState === client.OPEN && client.room === ws.room) {
 			  client.send(JSON.stringify(y));
 			}
 		    });
+		    //get room name, check if empty.
+		    Rooms[n].UserCnt = Rooms[n].UserCnt - 1;
+		    if (Rooms[n].UserCnt == 0) {
+			delete Rooms[n];
+		    }
 		    ws.room = null
           } else {
 	  }
-      } else if (r == "Public") {
+      } else if (r == "System") {
           // Broadcast to everyone.
           wss.clients.forEach(function each(client) {
               // check if the clients are roomates.
@@ -122,9 +124,17 @@ wss.on("connection", function(ws) {
                   client.send(JSON.stringify(p));
               }
           });
+      } else if (r == "Public") {
+          // Broadcast to everyone.
+          wss.Rooms[m].wsgroup.forEach(function each(client) {
+              // check if the clients are roomates.
+              if (client.readyState === client.OPEN && client.room === ws.room) {
+                  client.send(JSON.stringify(p));
+              }
+          });
       } else {
           // Private message.
-          wss.clients.forEach(function each(client) {
+          wss.Rooms[m].wsgroup.forEach(function each(client) {
               // check if the clients are roomates.
               if (client.readyState === client.OPEN) {
 		if (client.userid === r) {
@@ -142,24 +152,26 @@ wss.on("connection", function(ws) {
 	// Notice that if you didn't join any chatroom, ws.room is null.
   	// You have to check your variable null or not before manipulating them to prevent your server broken.
 	if (!!ws.room) {
-		//Delete Room data. 
 		var n = ws.room;
-		Rooms[n].UserCnt = Rooms[n].UserCnt - 1;
-			if (Rooms[n].UserCnt == 0) {
-				delete Rooms[n];
-			}
+		var indexR = Rooms[n].wsgroup.indexOf(ws);
+
 		// Build FunctionPackage for ws
 		var FnPkg_WS = [];
 		FnPkg_WS[0] = "Roommates_Leave"
 		FnPkg_WS[1] = ws.loginpkg
 		y = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg_WS)};
 		// Broadcast Leaving message to everyone else.
-		wss.clients.forEach(function each(client) {
-			// check if the clients are roomates.
-			if (client !== ws && client.readyState === client.OPEN && client.room === ws.room) {
+		wss.Rooms[n].wsgroup.forEach(function each(client) {
+			if (client !== ws && client.readyState === client.OPEN) {
 				client.send(JSON.stringify(y));
 			}
 		});
+		//Delete Room data. 
+		Rooms[n].wsgroup.splice(indexR, 1);
+		Rooms[n].UserCnt = Rooms[n].UserCnt - 1;
+			if (Rooms[n].UserCnt == 0) {
+				delete Rooms[n];
+			}
 	}
     //Clean
     var index = clients.indexOf(ws);
