@@ -51,14 +51,9 @@ wss.on("connection", function(ws) {
       if (r == "Server") {
           if (t == "JoinRoom") {
               // set properties of my ws
-		  ws.send(JSON.stringify("-ws set properties start-"));
               ws.loginpkg = k
 	      ws.userid = d
 	      ws.room = m
-		  ws.send(JSON.stringify(ws.loginpkg));
-		  ws.send(JSON.stringify(ws.userid));
-		  ws.send(JSON.stringify(ws.room));
-		  ws.send(JSON.stringify("-ws set properties end-"));
               // Modify Room data.
               if (!Rooms[m]) {
 		  Rooms[m] = {};
@@ -143,25 +138,30 @@ wss.on("connection", function(ws) {
   });
   
   ws.on("close", function() {
-    //get room name, check if empty.
+	// Notice that if you didn't join any chatroom, ws.room is null.
+  	// You have to check your variable null or not before manipulating them to prevent your server broken.
+	if (!!ws.room) {
+		//Delete Room data. 
+		var n = ws.room;
+		Rooms[n].UserCnt = Rooms[n].UserCnt - 1;
+			if (Rooms[n].UserCnt == 0) {
+				delete Rooms[n];
+			}
+		// Build FunctionPackage for ws
+		var FnPkg_WS = [];
+		FnPkg_WS[0] = "Roommates_Leave"
+		FnPkg_WS[1] = ws.loginpkg
+		y = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg_WS)};
+		// Broadcast Leaving message to everyone else.
+		wss.clients.forEach(function each(client) {
+			// check if the clients are roomates.
+			if (client !== ws && client.readyState === client.OPEN && client.room === ws.room) {
+				client.send(JSON.stringify(y));
+			}
+		});
+	}
+    //Clean
     var index = clients.indexOf(ws);
-    var n = ws.room;
-    Rooms[n].UserCnt = Rooms[n].UserCnt - 1;
-    if (Rooms[n].UserCnt == 0) {
-    	delete Rooms[n];
-    }
-    // Build FunctionPackage for ws
-    var FnPkg_WS = [];
-    FnPkg_WS[0] = "Roommates_Leave"
-    FnPkg_WS[1] = ws.loginpkg
-    y = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg_WS)};
-    // Broadcast Leaving message to everyone else.
-    wss.clients.forEach(function each(client) {
-	// check if the clients are roomates.
-        if (client !== ws && client.readyState === client.OPEN && client.room === ws.room) {
-	  client.send(JSON.stringify(y));
-        }
-    });
     clients.splice(index, 1);
     console.log("websocket connection close")
     clearInterval(id)
