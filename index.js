@@ -105,7 +105,7 @@ ws.send(JSON.stringify("start for each"));
 		    FnPkg_WS[1] = ws.loginpkg
 		    y = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg_WS)};
 		    // Broadcast Leaving message to everyone else.
-		    wss.Rooms[n].wsgroup.forEach(function each(client) {
+		    Rooms[n].wsgroup.forEach(function each(client) {
 			// check if the clients are roomates.
 			if (client.readyState === client.OPEN && client.room === ws.room) {
 			  client.send(JSON.stringify(y));
@@ -129,7 +129,7 @@ ws.send(JSON.stringify("start for each"));
           });
       } else if (r == "Public") {
           // Broadcast to everyone.
-          wss.Rooms[m].wsgroup.forEach(function each(client) {
+          Rooms[m].wsgroup.forEach(function each(client) {
               // check if the clients are roomates.
               if (client.readyState === client.OPEN && client.room === ws.room) {
                   client.send(JSON.stringify(p));
@@ -137,7 +137,7 @@ ws.send(JSON.stringify("start for each"));
           });
       } else {
           // Private message.
-          wss.Rooms[m].wsgroup.forEach(function each(client) {
+          Rooms[m].wsgroup.forEach(function each(client) {
               // check if the clients are roomates.
               if (client.readyState === client.OPEN) {
 		if (client.userid === r) {
@@ -164,7 +164,7 @@ ws.send(JSON.stringify("start for each"));
 		FnPkg_WS[1] = ws.loginpkg
 		y = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg_WS)};
 		// Broadcast Leaving message to everyone else.
-		wss.Rooms[n].wsgroup.forEach(function each(client) {
+		Rooms[n].wsgroup.forEach(function each(client) {
 			if (client !== ws && client.readyState === client.OPEN) {
 				client.send(JSON.stringify(y));
 			}
