@@ -24,7 +24,7 @@ var Rooms = {};
 var LoginCnt = 0;
 
 // Function
-var JoinRoom = function JoinRoom(ws, loginpkg, userid, roomname) {
+var JoinRoom = function(ws, loginpkg, userid, roomname) {
       // set properties of my ws
       ws.loginpkg = loginpkg
       ws.userid = userid
@@ -32,7 +32,7 @@ var JoinRoom = function JoinRoom(ws, loginpkg, userid, roomname) {
       // Modify Room data.
       if (!Rooms[roomname]) {
 	  Rooms[roomname] = {};
-	  Rooms[roomname].Roomname = m;
+	  Rooms[roomname].Roomname = ws.room;
 	  Rooms[roomname].UserCnt = 1;
 	  Rooms[roomname].wsgroup = [];
 	  Rooms[roomname].wsgroup.push(ws);
@@ -63,7 +63,7 @@ var JoinRoom = function JoinRoom(ws, loginpkg, userid, roomname) {
 };
 
 // Function:
-var RefreshRoomsList = function RefreshRoomsList(ws) {
+var RefreshRoomsList = function(ws) {
       // Show me RoomsList
       // Build FunctionPackage
       var FnPkg = [];
@@ -74,7 +74,7 @@ var RefreshRoomsList = function RefreshRoomsList(ws) {
 };
 
 // Function:
-var LeaveRoom = function LeaveRoom(ws) {
+var LeaveRoom = function(ws) {
 	    var n = ws.room;
 	    var indexR = Rooms[n].wsgroup.indexOf(ws);
 	    // Build FunctionPackage for ws
@@ -99,7 +99,7 @@ var LeaveRoom = function LeaveRoom(ws) {
 };
 
 // Function:
-var SystemMessage = function SystemMessage(ws,msg) {
+var SystemMessage = function(ws,msg) {
           // Broadcast to everyone.
           wss.clients.forEach(function each(client) {
               // check if the clients are roomates.
@@ -110,7 +110,7 @@ var SystemMessage = function SystemMessage(ws,msg) {
 };
 
 // Function:
-var PublicMessage = function PublicMessage(ws,msg) {
+var PublicMessage = function(ws,msg) {
           // Broadcast to everyone.
           Rooms[ws.room].wsgroup.forEach(function each(client) {
               // check if the clients are roomates.
@@ -121,7 +121,7 @@ var PublicMessage = function PublicMessage(ws,msg) {
 };
 
 // Function:
-var PrivateMessage = function PrivateMessage(ws,receiverid,msg) {
+var PrivateMessage = function(ws,receiverid,msg) {
           // Private message.
           Rooms[ws.room].wsgroup.forEach(function each(client) {
               // check if the clients are roomates.
