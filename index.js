@@ -23,6 +23,120 @@ var clients = [];
 var Rooms = {};
 var LoginCnt = 0;
 
+// Function
+var JoinRoom = function JoinRoom(ws, loginpkg, userid, roomname) {
+      // set properties of my ws
+      ws.loginpkg = loginpkg
+      ws.userid = userid
+      ws.room = roomname
+      // Modify Room data.
+      if (!Rooms[roomname]) {
+	  Rooms[roomname] = {};
+	  Rooms[roomname].Roomname = m;
+	  Rooms[roomname].UserCnt = 1;
+	  Rooms[roomname].wsgroup = [];
+	  Rooms[roomname].wsgroup.push(ws);
+      } else { 
+	  Rooms[roomname].wsgroup.push(ws);
+	  Rooms[roomname].UserCnt = Rooms[roomname].UserCnt + 1;
+      }
+      // Build FunctionPackage for ws
+      var FnPkg_WS = [];
+      FnPkg_WS[0] = "Roommates_Join"
+      FnPkg_WS[1] = ws.loginpkg
+      y = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg_WS)};
+      Rooms[roomname].wsgroup.forEach(function each(client) {
+	if (client.readyState === client.OPEN) {
+	    //tell roommates(except I) that I am joining.
+	    if (client !== ws) {
+	    client.send(JSON.stringify(y));
+	    } 
+	    //tell me who are my roommates(include I)
+	    // Build FunctionPackage
+	    var FnPkg_Client = [];
+	    FnPkg_Client[0] = "Roommates_Join"
+	    FnPkg_Client[1] = client.loginpkg
+	    u = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg_Client)};
+	    ws.send(JSON.stringify(u));
+	}
+      });
+};
+
+// Function:
+var RefreshRoomsList = function RefreshRoomsList(ws) {
+      // Show me RoomsList
+      // Build FunctionPackage
+      var FnPkg = [];
+      FnPkg[0] = "RefreshRoomsList"
+      FnPkg[1] = Rooms
+      u = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg)};
+      ws.send(JSON.stringify(u));
+};
+
+// Function:
+var LeaveRoom = function LeaveRoom(ws) {
+	    var n = ws.room;
+	    var indexR = Rooms[n].wsgroup.indexOf(ws);
+	    // Build FunctionPackage for ws
+	    var FnPkg_WS = [];
+	    FnPkg_WS[0] = "Roommates_Leave"
+	    FnPkg_WS[1] = ws.loginpkg
+	    y = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg_WS)};
+	    // Broadcast Leaving message to everyone else.
+	    Rooms[n].wsgroup.forEach(function each(client) {
+		// check if the clients are roomates.
+		if (client.readyState === client.OPEN) {
+		  client.send(JSON.stringify(y));
+		}
+	    });
+	    //Delete Room data. 
+	    Rooms[n].wsgroup.splice(indexR, 1);
+	    Rooms[n].UserCnt = Rooms[n].UserCnt - 1;
+	    if (Rooms[n].UserCnt == 0) {
+		delete Rooms[n];
+	    }
+	    ws.room = null
+};
+
+// Function:
+var SystemMessage = function SystemMessage(ws,msg) {
+          // Broadcast to everyone.
+          wss.clients.forEach(function each(client) {
+              // check if the clients are roomates.
+              if (client.readyState === client.OPEN && client.room === ws.room) {
+                  client.send(JSON.stringify(msg));
+              }
+          });
+};
+
+// Function:
+var PublicMessage = function PublicMessage(ws,msg) {
+          // Broadcast to everyone.
+          Rooms[ws.room].wsgroup.forEach(function each(client) {
+              // check if the clients are roomates.
+              if (client.readyState === client.OPEN && client.room === ws.room) {
+                  client.send(JSON.stringify(msg));
+              }
+          });
+};
+
+// Function:
+var PrivateMessage = function PrivateMessage(ws,receiverid,msg) {
+          // Private message.
+          Rooms[ws.room].wsgroup.forEach(function each(client) {
+              // check if the clients are roomates.
+              if (client.readyState === client.OPEN) {
+		if (client.userid === receiverid) {
+			client.send(JSON.stringify(msg));
+			if (client !== ws) {
+				ws.send(JSON.stringify(msg));
+			}
+		}
+              }
+          });
+};
+
+// Events
 wss.on("connection", function(ws) {
   clients.push(ws);
   var id = setInterval(function() {
@@ -41,8 +155,6 @@ wss.on("connection", function(ws) {
   ws.on("message", function incoming(data) {
     var p = JSON.parse(data);
     var k = p['Pkg'];
-    var a = JSON.parse(k);
-    var g = JSON.stringify(k);
     var t = p['Type'];
     var r = p['Receiver'];
     var m = p['Room'];
@@ -50,104 +162,19 @@ wss.on("connection", function(ws) {
       // Message as command package
       if (r == "Server") {
           if (t == "JoinRoom") {
-              // set properties of my ws
-              ws.loginpkg = k
-	      ws.userid = d
-	      ws.room = m
-              // Modify Room data.
-              if (!Rooms[m]) {
-		  Rooms[m] = {};
-                  Rooms[m].Roomname = m;
-                  Rooms[m].UserCnt = 1;
-		  Rooms[m].wsgroup = [];
-		  Rooms[m].wsgroup.push(ws);
-              } else { 
-		  Rooms[m].wsgroup.push(ws);
-                  Rooms[m].UserCnt = Rooms[m].UserCnt + 1;
-              }
-              // Build FunctionPackage for ws
-              var FnPkg_WS = [];
-              FnPkg_WS[0] = "Roommates_Join"
-              FnPkg_WS[1] = ws.loginpkg
-              y = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg_WS)};
-              Rooms[m].wsgroup.forEach(function each(client) {
-                if (client.readyState === client.OPEN) {
-                    //tell roommates(except I) that I am joining.
-                    if (client !== ws) {
-                    client.send(JSON.stringify(y));
-                    } 
-                    //tell me who are my roommates(include I)
-                    // Build FunctionPackage
-                    var FnPkg_Client = [];
-                    FnPkg_Client[0] = "Roommates_Join"
-                    FnPkg_Client[1] = client.loginpkg
-                    u = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg_Client)};
-                    ws.send(JSON.stringify(u));
-                }
-              });
+		JoinRoom(ws,k,d,m);
           } else if (t == "RefreshRoomsList") {
-              // Show me RoomsList
-              // Build FunctionPackage
-              var FnPkg = [];
-              FnPkg[0] = "RefreshRoomsList"
-              FnPkg[1] = Rooms
-              u = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg)};
-              ws.send(JSON.stringify(u));
+		RefreshRoomsList(ws);
           } else if (t == "LeaveRoom") {
-		    var i = JSON.parse(ws.loginpkg);
-		    var n = i['Room'];
-		    // Build FunctionPackage for ws
-		    var FnPkg_WS = [];
-		    FnPkg_WS[0] = "Roommates_Leave"
-		    FnPkg_WS[1] = ws.loginpkg
-		    y = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg_WS)};
-		    // Broadcast Leaving message to everyone else.
-		    Rooms[n].wsgroup.forEach(function each(client) {
-			// check if the clients are roomates.
-			if (client.readyState === client.OPEN && client.room === ws.room) {
-			  client.send(JSON.stringify(y));
-			}
-		    });
-		    // remove my ws from roomgroup 
-		    var indexR = Rooms[n].wsgroup.indexOf(ws);
-		    Rooms[n].wsgroup.splice(indexR, 1);
-		    //get room name, check if empty.
-		    Rooms[n].UserCnt = Rooms[n].UserCnt - 1;
-		    if (Rooms[n].UserCnt == 0) {
-			delete Rooms[n];
-		    }
-		    ws.room = null
+		LeaveRoom(ws);
           } else {
 	  }
       } else if (r == "System") {
-          // Broadcast to everyone.
-          wss.clients.forEach(function each(client) {
-              // check if the clients are roomates.
-              if (client.readyState === client.OPEN && client.room === ws.room) {
-                  client.send(JSON.stringify(p));
-              }
-          });
+		SystemMessage(ws,p);
       } else if (r == "Public") {
-          // Broadcast to everyone.
-          Rooms[m].wsgroup.forEach(function each(client) {
-              // check if the clients are roomates.
-              if (client.readyState === client.OPEN && client.room === ws.room) {
-                  client.send(JSON.stringify(p));
-              }
-          });
+		PublicMessage(ws,p);
       } else {
-          // Private message.
-          Rooms[m].wsgroup.forEach(function each(client) {
-              // check if the clients are roomates.
-              if (client.readyState === client.OPEN) {
-		if (client.userid === r) {
-			client.send(JSON.stringify(p));
-			if (client !== ws) {
-				ws.send(JSON.stringify(p));
-			}
-		}
-              }
-          });
+		PrivateMessage(ws,r,p);
       }
   });
   
@@ -155,26 +182,7 @@ wss.on("connection", function(ws) {
 	// Notice that if you didn't join any chatroom, ws.room is null.
   	// You have to check your variable null or not before manipulating them to prevent your server broken.
 	if (!!ws.room) {
-		var n = ws.room;
-		var indexR = Rooms[n].wsgroup.indexOf(ws);
-
-		// Build FunctionPackage for ws
-		var FnPkg_WS = [];
-		FnPkg_WS[0] = "Roommates_Leave"
-		FnPkg_WS[1] = ws.loginpkg
-		y = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg_WS)};
-		// Broadcast Leaving message to everyone else.
-		Rooms[n].wsgroup.forEach(function each(client) {
-			if (client !== ws && client.readyState === client.OPEN) {
-				client.send(JSON.stringify(y));
-			}
-		});
-		//Delete Room data. 
-		Rooms[n].wsgroup.splice(indexR, 1);
-		Rooms[n].UserCnt = Rooms[n].UserCnt - 1;
-			if (Rooms[n].UserCnt == 0) {
-				delete Rooms[n];
-			}
+		LeaveRoom(ws);
 	}
     //Clean
     var index = clients.indexOf(ws);
