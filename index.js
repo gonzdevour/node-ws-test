@@ -95,7 +95,6 @@ var LeaveRoom = function(ws) {
 	    if (Rooms[n].UserCnt == 0) {
 		delete Rooms[n];
 	    }
-	    ws.room = null
 };
 
 // Function:
