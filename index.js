@@ -69,12 +69,13 @@ var RefreshRoomsList = function(ws) {
 	RoomsArr.forEach(function each(roomname) {
 		// Show me RoomsList
 		// Build FunctionPackage
+		var p = {};
+		p["RoomName"] = roomname;
+		p["UserCnt"] = Rooms[roomname].UserCnt;
 		var FnPkg = [];
 		FnPkg[0] = "RefreshRoomsList";
-		FnPkg[1] = {};
-		FnPkg[1]["RoomName"] = roomname;
-		FnPkg[1]["UserCnt"] = Rooms[roomname].UserCnt;
-		u = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":FnPkg};
+		FnPkg[1] = p
+		u = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg)};
 		ws.send(JSON.stringify(u));
 	});
 };
