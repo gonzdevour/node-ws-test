@@ -21,6 +21,7 @@ var Game_Name = ""
 //simple storage.
 var clients = [];
 var Rooms = {};
+var RoomsData = {};
 var LoginCnt = 0;
 
 // Function
@@ -33,12 +34,14 @@ var JoinRoom = function(ws, loginpkg, userid, roomname) {
       if (!Rooms[roomname]) {
 	  Rooms[roomname] = {};
 	  Rooms[roomname].Roomname = ws.room;
-	  Rooms[roomname].UserCnt = 1;
 	  Rooms[roomname].wsgroup = [];
 	  Rooms[roomname].wsgroup.push(ws);
+	  RoomsData[roomname] = {};
+	  RoomsData[roomname].Roomname = ws.room;
+	  RoomsData[roomname].UserCnt = 1;
       } else { 
 	  Rooms[roomname].wsgroup.push(ws);
-	  Rooms[roomname].UserCnt = Rooms[roomname].UserCnt + 1;
+	  RoomsData[roomname].UserCnt = RoomsData[roomname].UserCnt + 1;
       }
       // Build FunctionPackage for ws
       var FnPkg_WS = [];
@@ -64,13 +67,13 @@ var JoinRoom = function(ws, loginpkg, userid, roomname) {
 
 // Function:
 var RefreshRoomsList = function(ws) {
-      // Show me RoomsList
-      // Build FunctionPackage
-      var FnPkg = [];
-      FnPkg[0] = "RefreshRoomsList"
-      FnPkg[1] = Rooms
-      u = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg)};
-      ws.send(JSON.stringify(u));
+	// Show me RoomsList	
+	// Build FunctionPackage
+	var FnPkg = [];
+	FnPkg[0] = "RefreshRoomsList"
+	FnPkg[1] = RoomsData
+	u = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg)};
+	ws.send(JSON.stringify(u));
 };
 
 // Function:
@@ -91,9 +94,10 @@ var LeaveRoom = function(ws) {
 	    });
 	    //Delete Room data. 
 	    Rooms[n].wsgroup.splice(indexR, 1);
-	    Rooms[n].UserCnt = Rooms[n].UserCnt - 1;
-	    if (Rooms[n].UserCnt == 0) {
+	    RoomsData[n].UserCnt = RoomsData[n].UserCnt - 1;
+	    if (RoomsData[n].UserCnt == 0) {
 		delete Rooms[n];
+		delete RoomsData[n];
 	    }
 };
 
