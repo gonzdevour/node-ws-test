@@ -74,7 +74,7 @@ var RefreshRoomsList = function(ws) {
 		FnPkg[1] = {};
 		FnPkg[1]["RoomName"] = roomname;
 		FnPkg[1]["UserCnt"] = Rooms[roomname].UserCnt;
-		u = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg)};
+		u = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":FnPkg};
 		ws.send(JSON.stringify(u));
 	});
 };
