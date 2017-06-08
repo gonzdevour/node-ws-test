@@ -74,7 +74,7 @@ var RefreshRoomsList = function(ws) {
 		p["UserCnt"] = Rooms[roomname].UserCnt;
 		var FnPkg = [];
 		FnPkg[0] = "RefreshRoomsList";
-		FnPkg[1] = p
+		FnPkg[1] = JSON.stringify(p);
 		u = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg)};
 		ws.send(JSON.stringify(u));
 	});
