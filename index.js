@@ -70,8 +70,8 @@ var RefreshRoomsList = function(ws) {
 	// Show me RoomsList	
 	// Build FunctionPackage
 	var FnPkg = [];
-	FnPkg[0] = "RefreshRoomsList"
-	FnPkg[1] = RoomsData
+	FnPkg[0] = "RefreshRoomsList";
+	FnPkg[1] = JSON.stringify(RoomsData);
 	u = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg)};
 	ws.send(JSON.stringify(u));
 };
