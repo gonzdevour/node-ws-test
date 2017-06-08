@@ -21,6 +21,7 @@ var Game_Name = ""
 //simple storage.
 var clients = [];
 var Rooms = {};
+var RoomsArr = []; 
 var RoomsData = {};
 var LoginCnt = 0;
 
@@ -39,6 +40,7 @@ var JoinRoom = function(ws, loginpkg, userid, roomname) {
 	  RoomsData[roomname] = {};
 	  RoomsData[roomname].Roomname = ws.room;
 	  RoomsData[roomname].UserCnt = 1;
+	  RoomsArr.push(roomname);
       } else { 
 	  Rooms[roomname].wsgroup.push(ws);
 	  RoomsData[roomname].UserCnt = RoomsData[roomname].UserCnt + 1;
@@ -71,7 +73,7 @@ var RefreshRoomsList = function(ws) {
 	// Build FunctionPackage
 	var FnPkg = [];
 	FnPkg[0] = "RefreshRoomsList";
-	FnPkg[1] = JSON.stringify(RoomsData);
+	FnPkg[1] = RoomsArr;
 	u = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg)};
 	ws.send(JSON.stringify(u));
 };
@@ -98,6 +100,7 @@ var LeaveRoom = function(ws) {
 	    if (RoomsData[n].UserCnt == 0) {
 		delete Rooms[n];
 		delete RoomsData[n];
+    		RoomsArr.splice(RoomsArr.indexOf(n), 1);
 	    }
 };
 
