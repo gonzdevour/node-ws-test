@@ -76,6 +76,11 @@ var JoinRoom = function(ws, loginpkg, userid, roomname,userlimit) {
 // Function:
 var JoinRoomAccept = function(ws,roomname) {
       // Build FunctionPackage for ws
+      var FnPkg_JA = [];
+      FnPkg_JA[0] = "JoinRoomAccepted"
+      z = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg_JA)};
+      ws.send(JSON.stringify(z));
+      // Build FunctionPackage for ws
       var FnPkg_WS = [];
       FnPkg_WS[0] = "Roommates_Join"
       FnPkg_WS[1] = ws.loginpkg
