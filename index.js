@@ -40,9 +40,19 @@ var JoinRoom = function(ws, loginpkg, userid, roomname,userlimit) {
 	  Rooms[roomname].UserLimit = userlimit; 
 	  RoomsArr.push(ws.room);
       } else { 
-	  Rooms[roomname].wsgroup.push(ws);
-	  Rooms[roomname].UserCnt = Rooms[roomname].UserCnt + 1;
+	  var s = Rooms[roomname].UserCnt + 1;
+          if (s > userlimit) {
+		JoinRoomRefuse(ws,"overload");
+          } else {
+		Rooms[roomname].wsgroup.push(ws);
+		Rooms[roomname].UserCnt = Rooms[roomname].UserCnt + 1;
+		JoinRoomAccept(ws,roomname);
+	  }
       }
+};
+
+// Function:
+var JoinRoomAccept = function(ws,roomname) {
       // Build FunctionPackage for ws
       var FnPkg_WS = [];
       FnPkg_WS[0] = "Roommates_Join"
@@ -63,6 +73,16 @@ var JoinRoom = function(ws, loginpkg, userid, roomname,userlimit) {
 	    ws.send(JSON.stringify(u));
 	}
       });
+};
+
+// Function:
+var JoinRoomRefuse = function(ws,reason) {
+      // Build FunctionPackage for ws
+      var FnPkg_WS = [];
+      FnPkg_WS[0] = "Roommates_Refused"
+      FnPkg_WS[1] = reason
+      y = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg_WS)};
+      ws.send(JSON.stringify(y));
 };
 
 // Function:
