@@ -130,27 +130,28 @@ var RefreshRoomsList = function(ws) {
 };
 
 // Function:
-var LeaveRoom = function(ws) {
-	    var n = ws.room;
-	    var indexR = Rooms[n].wsgroup.indexOf(ws);
+var LeaveRoom = function(ws,roomname,reason) {
+	    //var n = ws.room;
+	    var indexR = Rooms[roomname].wsgroup.indexOf(ws);
 	    // Build FunctionPackage for ws
 	    var FnPkg_WS = [];
 	    FnPkg_WS[0] = "Roommates_Leave"
 	    FnPkg_WS[1] = ws.loginpkg
+	    FnPkg_WS[2] = reason	
 	    y = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg_WS)};
 	    // Broadcast Leaving message to everyone else.
-	    Rooms[n].wsgroup.forEach(function each(client) {
+	    Rooms[roomname].wsgroup.forEach(function each(client) {
 		// check if the clients are roomates.
 		if (client.readyState === client.OPEN) {
 		  client.send(JSON.stringify(y));
 		}
 	    });
 	    //Delete Room data. 
-	    Rooms[n].wsgroup.splice(indexR, 1);
-	    Rooms[n].UserCnt = Rooms[n].UserCnt - 1;
-	    if (Rooms[n].UserCnt == 0) {
-		delete Rooms[n];
-	    	RoomsArr.splice(RoomsArr.indexOf(n), 1);
+	    Rooms[roomname].wsgroup.splice(indexR, 1);
+	    Rooms[roomname].UserCnt = Rooms[roomname].UserCnt - 1;
+	    if (Rooms[roomname].UserCnt == 0) {
+		delete Rooms[roomname];
+	    	RoomsArr.splice(RoomsArr.indexOf(roomname), 1);
 	    }
 };
 
@@ -225,7 +226,7 @@ wss.on("connection", function(ws) {
           } else if (t == "RefreshRoomsList") {
 		RefreshRoomsList(ws);
           } else if (t == "LeaveRoom") {
-		LeaveRoom(ws);
+		LeaveRoom(ws,m,"request");
           } else {
 	  }
       } else if (r == "System") {
@@ -241,7 +242,7 @@ wss.on("connection", function(ws) {
 	// Notice that if you didn't join any chatroom, ws.room is null.
   	// You have to check your variable null or not before manipulating them to prevent your server broken.
 	if (!!ws.room) {
-		LeaveRoom(ws);
+		LeaveRoom(ws,ws.room,"LeftGame");
 	}
     //Clean
     var index = clients.indexOf(ws);
