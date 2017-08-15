@@ -25,6 +25,27 @@ var RoomsArr = [];
 var LoginCnt = 0;
 
 // Function
+var CreateRoom = function(ws, loginpkg, userid, roomname,userlimit) {
+      // set properties of my ws
+      ws.loginpkg = loginpkg
+      ws.userid = userid
+      ws.room = roomname
+      // Modify Room data.
+      if (!Rooms[roomname]) {
+	  Rooms[roomname] = {};
+	  Rooms[roomname].Roomname = ws.room;
+	  Rooms[roomname].wsgroup = [];
+	  Rooms[roomname].wsgroup.push(ws);
+	  Rooms[roomname].UserCnt = 1;
+	  Rooms[roomname].UserLimit = userlimit; 
+	  RoomsArr.push(ws.room);
+	  JoinRoomAccept(ws,roomname);
+      } else { 
+	  JoinRoomRefuse(ws,"exist");
+      }
+};
+
+// Function
 var JoinRoom = function(ws, loginpkg, userid, roomname,userlimit) {
       // set properties of my ws
       ws.loginpkg = loginpkg
@@ -192,7 +213,9 @@ wss.on("connection", function(ws) {
     var d = p['UserID']
       // Message as command package
       if (r == "Server") {
-          if (t == "JoinRoom") {
+          if (t == "CreateRoom") {
+		CreateRoom(ws,k,d,m,l);
+          } else if (t == "JoinRoom") {
 		JoinRoom(ws,k,d,m,l);
           } else if (t == "RefreshRoomsList") {
 		RefreshRoomsList(ws);
