@@ -25,7 +25,7 @@ var RoomsArr = [];
 var LoginCnt = 0;
 
 // Function
-var JoinRoom = function(ws, loginpkg, userid, roomname) {
+var JoinRoom = function(ws, loginpkg, userid, roomname,userlimit) {
       // set properties of my ws
       ws.loginpkg = loginpkg
       ws.userid = userid
@@ -37,6 +37,7 @@ var JoinRoom = function(ws, loginpkg, userid, roomname) {
 	  Rooms[roomname].wsgroup = [];
 	  Rooms[roomname].wsgroup.push(ws);
 	  Rooms[roomname].UserCnt = 1;
+	  Rooms[roomname].UserLimit = userlimit; 
 	  RoomsArr.push(ws.room);
       } else { 
 	  Rooms[roomname].wsgroup.push(ws);
@@ -72,6 +73,7 @@ var RefreshRoomsList = function(ws) {
 		var p = {};
 		p["RoomName"] = roomname;
 		p["UserCnt"] = Rooms[roomname].UserCnt;
+		p["UserLimit"] =  Rooms[roomname].UserLimit;
 		var FnPkg = [];
 		FnPkg[0] = "RefreshRoomsList";
 		FnPkg[1] = JSON.stringify(p);
@@ -165,11 +167,12 @@ wss.on("connection", function(ws) {
     var t = p['Type'];
     var r = p['Receiver'];
     var m = p['Room'];
+    var l = p['UserLimit'];	
     var d = p['UserID']
       // Message as command package
       if (r == "Server") {
           if (t == "JoinRoom") {
-		JoinRoom(ws,k,d,m);
+		JoinRoom(ws,k,d,m,l);
           } else if (t == "RefreshRoomsList") {
 		RefreshRoomsList(ws);
           } else if (t == "LeaveRoom") {
