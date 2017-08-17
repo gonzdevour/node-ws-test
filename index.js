@@ -59,6 +59,7 @@ var JoinRoom = function(ws, loginpkg, userid, roomname,userlimit) {
 	  Rooms[roomname].wsgroup.push(ws);
 	  Rooms[roomname].UserCnt = 1;
 	  Rooms[roomname].UserLimit = userlimit; 
+	  Rooms[roomname].State = "Open";
 	  RoomsArr.push(ws.room);
 	  JoinRoomAccept(ws,roomname);
       } else { 
@@ -121,12 +122,14 @@ var RefreshRoomsList = function(ws) {
 		p["RoomName"] = roomname;
 		p["UserCnt"] = Rooms[roomname].UserCnt;
 		p["UserLimit"] = Rooms[roomname].UserLimit;
+		p["State"] = Rooms[roomname].State;
 		var FnPkg = [];
 		FnPkg[0] = "RefreshRoomsList";
 		FnPkg[1] = JSON.stringify(p);
 		FnPkg[2] = roomname;
 		FnPkg[3] = Rooms[roomname].UserCnt;
 		FnPkg[4] = Rooms[roomname].UserLimit;
+		FnPkg[5] = Rooms[roomname].State;
 		u = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg)};
 		ws.send(JSON.stringify(u));
 	});
@@ -156,6 +159,18 @@ var LeaveRoom = function(ws,roomname,reason) {
 		delete Rooms[roomname];
 	    	RoomsArr.splice(RoomsArr.indexOf(roomname), 1);
 	    }
+};
+
+// Function:
+var LockRoom = function(ws,roomname,reason) {
+	Rooms[roomname].State = "Locked";
+	RefreshRoomsList(ws);
+	// Build FunctionPackage for ws
+	var FnPkg_WS = [];
+	FnPkg_WS[0] = "RoomLocked"
+	FnPkg_WS[1] = reason
+	y = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg_WS)};
+	ws.send(JSON.stringify(y));
 };
 
 // Function:
@@ -230,6 +245,8 @@ wss.on("connection", function(ws) {
 		RefreshRoomsList(ws);
           } else if (t == "LeaveRoom") {
 		LeaveRoom(ws,m,"request");
+          } else if (t == "LockRoom") {
+		LockRoom(ws,m,"request");
           } else {
 	  }
       } else if (r == "System") {
