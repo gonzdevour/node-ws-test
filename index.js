@@ -120,10 +120,13 @@ var RefreshRoomsList = function(ws) {
 		var p = {};
 		p["RoomName"] = roomname;
 		p["UserCnt"] = Rooms[roomname].UserCnt;
-		p["UserLimit"] =  Rooms[roomname].UserLimit;
+		p["UserLimit"] = Rooms[roomname].UserLimit;
 		var FnPkg = [];
 		FnPkg[0] = "RefreshRoomsList";
 		FnPkg[1] = JSON.stringify(p);
+		FnPkg[2] = roomname;
+		FnPkg[3] = Rooms[roomname].UserCnt;
+		FnPkg[4] = Rooms[roomname].UserLimit;
 		u = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg)};
 		ws.send(JSON.stringify(u));
 	});
