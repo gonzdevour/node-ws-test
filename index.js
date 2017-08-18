@@ -25,7 +25,7 @@ var RoomsArr = [];
 var LoginCnt = 0;
 
 // Function
-var CreateRoom = function(ws, loginpkg, userid, roomname,userlimit) {
+var CreateRoom = function(ws, loginpkg, userid, roomname,userlimit,username) {
       // set properties of my ws
       ws.loginpkg = loginpkg
       ws.userid = userid
@@ -37,7 +37,8 @@ var CreateRoom = function(ws, loginpkg, userid, roomname,userlimit) {
 	  Rooms[roomname].wsgroup = [];
 	  Rooms[roomname].wsgroup.push(ws);
 	  Rooms[roomname].UserCnt = 1;
-	  Rooms[roomname].UserLimit = userlimit; 
+	  Rooms[roomname].UserLimit = userlimit;
+	  Rooms[roomname].Hostname = username;
 	  RoomsArr.push(ws.room);
 	  JoinRoomAccept(ws,roomname);
       } else { 
@@ -46,7 +47,7 @@ var CreateRoom = function(ws, loginpkg, userid, roomname,userlimit) {
 };
 
 // Function
-var JoinRoom = function(ws, loginpkg, userid, roomname,userlimit) {
+var JoinRoom = function(ws, loginpkg, userid, roomname,userlimit,username) {
       // set properties of my ws
       ws.loginpkg = loginpkg
       ws.userid = userid
@@ -58,7 +59,8 @@ var JoinRoom = function(ws, loginpkg, userid, roomname,userlimit) {
 	  Rooms[roomname].wsgroup = [];
 	  Rooms[roomname].wsgroup.push(ws);
 	  Rooms[roomname].UserCnt = 1;
-	  Rooms[roomname].UserLimit = userlimit; 
+	  Rooms[roomname].UserLimit = userlimit;
+	  Rooms[roomname].Hostname = username;
 	  Rooms[roomname].State = "Open";
 	  RoomsArr.push(ws.room);
 	  JoinRoomAccept(ws,roomname);
@@ -123,6 +125,7 @@ var RefreshRoomsList = function(ws) {
 		p["UserCnt"] = Rooms[roomname].UserCnt;
 		p["UserLimit"] = Rooms[roomname].UserLimit;
 		p["State"] = Rooms[roomname].State;
+		p["Hostname"] = Rooms[roomname].Hostname
 		var FnPkg = [];
 		FnPkg[0] = "RefreshRoomsList";
 		FnPkg[1] = JSON.stringify(p);
@@ -130,6 +133,7 @@ var RefreshRoomsList = function(ws) {
 		FnPkg[3] = Rooms[roomname].UserCnt;
 		FnPkg[4] = Rooms[roomname].UserLimit;
 		FnPkg[5] = Rooms[roomname].State;
+		FnPkg[6] = Rooms[roomname].Hostname
 		u = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg)};
 		ws.send(JSON.stringify(u));
 	});
@@ -235,12 +239,13 @@ wss.on("connection", function(ws) {
     var m = p['Room'];
     var l = p['UserLimit'];	
     var d = p['UserID']
+    var n = p['Name']
       // Message as command package
       if (r == "Server") {
           if (t == "CreateRoom") {
-		CreateRoom(ws,k,d,m,l);
+		CreateRoom(ws,k,d,m,l,n);
           } else if (t == "JoinRoom") {
-		JoinRoom(ws,k,d,m,l);
+		JoinRoom(ws,k,d,m,l,n);
           } else if (t == "RefreshRoomsList") {
 		RefreshRoomsList(ws);
           } else if (t == "LeaveRoom") {
