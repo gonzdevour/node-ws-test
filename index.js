@@ -84,6 +84,7 @@ var JoinRoomAccept = function(ws,roomname) {
       // Build FunctionPackage for ws
       var FnPkg_JA = [];
       FnPkg_JA[0] = "JoinRoomAccepted"
+      FnPkg_JA[1] = roomname
       z = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg_JA)};
       ws.send(JSON.stringify(z));
       // Build FunctionPackage for ws
