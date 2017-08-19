@@ -63,7 +63,7 @@ var JoinRoom = function(ws, loginpkg, userid, roomname,userlimit,username) {
 	  RoomsArr.push(roomname);
 	  JoinRoomAccept(ws,roomname);
       } else {
-          if (!!ws.room && ws.room != roomname ) {
+          if (!!ws.room && ws.room == roomname ) {
 		JoinRoomRefuse(ws,"sameroom");
           } else {
 		var s = Rooms[roomname].UserCnt + 1;
