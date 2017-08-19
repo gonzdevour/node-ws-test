@@ -29,17 +29,16 @@ var CreateRoom = function(ws, loginpkg, userid, roomname,userlimit,username) {
       // set properties of my ws
       ws.loginpkg = loginpkg
       ws.userid = userid
-      ws.room = roomname
       // Modify Room data.
       if (!Rooms[roomname]) {
 	  Rooms[roomname] = {};
-	  Rooms[roomname].Roomname = ws.room;
+	  Rooms[roomname].Roomname = roomname;
 	  Rooms[roomname].wsgroup = [];
 	  Rooms[roomname].wsgroup.push(ws);
 	  Rooms[roomname].UserCnt = 1;
 	  Rooms[roomname].UserLimit = userlimit;
 	  Rooms[roomname].Hostname = username;
-	  RoomsArr.push(ws.room);
+	  RoomsArr.push(roomname);
 	  JoinRoomAccept(ws,roomname);
       } else { 
 	  JoinRoomRefuse(ws,"exist");
@@ -51,33 +50,37 @@ var JoinRoom = function(ws, loginpkg, userid, roomname,userlimit,username) {
       // set properties of my ws
       ws.loginpkg = loginpkg
       ws.userid = userid
-      ws.room = roomname
       // Modify Room data.
       if (!Rooms[roomname]) {
 	  Rooms[roomname] = {};
-	  Rooms[roomname].Roomname = ws.room;
+	  Rooms[roomname].Roomname = roomname;
 	  Rooms[roomname].wsgroup = [];
 	  Rooms[roomname].wsgroup.push(ws);
 	  Rooms[roomname].UserCnt = 1;
 	  Rooms[roomname].UserLimit = userlimit;
 	  Rooms[roomname].Hostname = username;
 	  Rooms[roomname].State = "Open";
-	  RoomsArr.push(ws.room);
+	  RoomsArr.push(roomname);
 	  JoinRoomAccept(ws,roomname);
-      } else { 
-	  var s = Rooms[roomname].UserCnt + 1;
-          if (s > userlimit) {
-		JoinRoomRefuse(ws,"overload");
+      } else {
+          if (!!ws.room && ws.room != roomname ) {
+		JoinRoomRefuse(ws,"sameroom");
           } else {
-		Rooms[roomname].wsgroup.push(ws);
-		Rooms[roomname].UserCnt = Rooms[roomname].UserCnt + 1;
-		JoinRoomAccept(ws,roomname);
+		var s = Rooms[roomname].UserCnt + 1;
+		if (s > userlimit) {
+			JoinRoomRefuse(ws,"overload");
+		} else {
+			Rooms[roomname].wsgroup.push(ws);
+			Rooms[roomname].UserCnt = Rooms[roomname].UserCnt + 1;
+			JoinRoomAccept(ws,roomname);
+		}
 	  }
       }
 };
 
 // Function:
 var JoinRoomAccept = function(ws,roomname) {
+      ws.room = roomname
       // Build FunctionPackage for ws
       var FnPkg_JA = [];
       FnPkg_JA[0] = "JoinRoomAccepted"
