@@ -173,12 +173,18 @@ var LeaveRoom = function(ws,roomname,reason) {
 var LockRoom = function(ws,roomname,reason) {
 	Rooms[roomname].State = "Locked";
 	RefreshRoomsList(ws);
-	// Build FunctionPackage for ws
+	// Build FunctionPackage for each client
 	var FnPkg_WS = [];
 	FnPkg_WS[0] = "RoomLocked"
 	FnPkg_WS[1] = reason
 	y = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg_WS)};
-	ws.send(JSON.stringify(y));
+	// Broadcast Lockroom message to everyone else.
+	Rooms[roomname].wsgroup.forEach(function each(client) {
+		// check if the clients are roomates.
+		if (client.readyState === client.OPEN) {
+		  client.send(JSON.stringify(y));
+		}
+	});
 };
 
 // Function:
