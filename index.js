@@ -84,9 +84,15 @@ var JoinRoomAccept = function(ws,roomname) {
       // Build FunctionPackage for ws
       var FnPkg_JA = [];
       FnPkg_JA[0] = "JoinRoomAccepted"
-      FnPkg_JA[1] = roomname
+      FnPkg_JA[1] = ws.loginpkg
+      FnPkg_JA[2] = roomname
       z = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg_JA)};
       ws.send(JSON.stringify(z));
+      RefreshRoommateList(ws,roomname);
+};
+
+// Function:
+var RefreshRoommateList = function(ws,roomname) {
       // Build FunctionPackage for ws
       var FnPkg_WS = [];
       FnPkg_WS[0] = "Roommates_Join"
@@ -117,6 +123,9 @@ var JoinRoomRefuse = function(ws,reason) {
       FnPkg_WS[1] = reason
       y = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg_WS)};
       ws.send(JSON.stringify(y));
+      if (!!ws.room ) {
+		RefreshRoommateList(ws,ws.room);
+      }
 };
 
 // Function:
@@ -258,6 +267,8 @@ wss.on("connection", function(ws) {
 		JoinRoom(ws,k,d,m,l,n);
           } else if (t == "RefreshRoomsList") {
 		RefreshRoomsList(ws);
+          } else if (t == "RefreshRoommateList") {
+		RefreshRoommateList(ws,m);		  
           } else if (t == "LeaveRoom") {
 		LeaveRoom(ws,m,"request");
           } else if (t == "LockRoom") {
