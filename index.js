@@ -123,7 +123,7 @@ var JoinRoomRefuse = function(ws,reason) {
       FnPkg_WS[1] = reason
       y = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg_WS)};
       ws.send(JSON.stringify(y));
-      if (!!ws.room ) {
+      if (!!ws.room) {
 		RefreshRoommateList(ws,ws.room);
       }
 };
