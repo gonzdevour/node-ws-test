@@ -151,7 +151,8 @@ var RefreshRoomsList = function(ws) {
 
 // Function:
 var LeaveRoom = function(ws,roomname,reason) {
-	    //var n = ws.room;
+	    //clean room name
+	    ws.room = "";
 	    var indexR = Rooms[roomname].wsgroup.indexOf(ws);
 	    // Build FunctionPackage for ws
 	    var FnPkg_WS = [];
