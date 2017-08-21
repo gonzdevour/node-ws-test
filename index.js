@@ -103,32 +103,30 @@ var JoinRoomAccept = function(ws,roomname) {
 
 // Function:
 var RefreshRoommateList = function(ws,roomname) {
-      // Build FunctionPackage for ws
-      var FnPkg_WS = [];
-      FnPkg_WS[0] = "Roommates_Join"
-      FnPkg_WS[1] = ws.loginpkg
-      y = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg_WS)};
-	AddLog(ws,"start refresh roommate list")
+	// Build FunctionPackage for ws
+	var FnPkg_WS = [];
+	FnPkg_WS[0] = "Roommates_Join"
+	FnPkg_WS[1] = ws.loginpkg
+	y = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg_WS)};
 	if (!Rooms[roomname]) {
-		AddLog(ws,"ws not exist")
+		AddLog(ws,"RefreshRoommateList refused: room not exist")
 	} else {
-		AddLog(ws,"ws exist")
+		Rooms[roomname].wsgroup.forEach(function each(client) {
+			if (client.readyState === client.OPEN) {
+				//tell roommates(except I) that I am joining.
+				if (client !== ws) {
+					client.send(JSON.stringify(y));
+				} 
+				//tell me who are my roommates(include I)
+				// Build FunctionPackage
+				var FnPkg_Client = [];
+				FnPkg_Client[0] = "Roommates_Join"
+				FnPkg_Client[1] = client.loginpkg
+				u = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg_Client)};
+				ws.send(JSON.stringify(u));
+			}
+		});
 	}
-      Rooms[roomname].wsgroup.forEach(function each(client) {
-	if (client.readyState === client.OPEN) {
-	    //tell roommates(except I) that I am joining.
-	    if (client !== ws) {
-	    client.send(JSON.stringify(y));
-	    } 
-	    //tell me who are my roommates(include I)
-	    // Build FunctionPackage
-	    var FnPkg_Client = [];
-	    FnPkg_Client[0] = "Roommates_Join"
-	    FnPkg_Client[1] = client.loginpkg
-	    u = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg_Client)};
-	    ws.send(JSON.stringify(u));
-	}
-      });
 };
 
 // Function:
