@@ -162,17 +162,17 @@ var RefreshRoomsList = function(ws) {
 // Function:
 var LeaveRoom = function(ws,roomname,reason) {
 	    //clean room name
-	AddLog("Start Clean room name");
+	AddLog(ws,"Start Clean room name");
 	    ws.room = "";
 	    var indexR = Rooms[roomname].wsgroup.indexOf(ws);
-	AddLog("Clean room name");
+	AddLog(ws,"Clean room name");
 	    // Build FunctionPackage for ws
 	    var FnPkg_WS = [];
 	    FnPkg_WS[0] = "Roommates_Leave"
 	    FnPkg_WS[1] = ws.loginpkg
 	    FnPkg_WS[2] = reason	
 	    y = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg_WS)};
-	AddLog("Build Roommates_Leave pkg");
+	AddLog(ws,"Build Roommates_Leave pkg");
 	    // Broadcast Leaving message to everyone else.
 	    Rooms[roomname].wsgroup.forEach(function each(client) {
 		// check if the clients are roomates.
@@ -180,7 +180,7 @@ var LeaveRoom = function(ws,roomname,reason) {
 		  client.send(JSON.stringify(y));
 		}
 	    });
-	AddLog("Broadcast roommates leave");
+	AddLog(ws,"Broadcast roommates leave");
 	    //Delete Room data. 
 	    Rooms[roomname].wsgroup.splice(indexR, 1);
 	    Rooms[roomname].UserCnt = Rooms[roomname].UserCnt - 1;
@@ -188,7 +188,7 @@ var LeaveRoom = function(ws,roomname,reason) {
 		delete Rooms[roomname];
 	    	RoomsArr.splice(RoomsArr.indexOf(roomname), 1);
 	    }
-	AddLog("Delete room data");
+	AddLog(ws,"Delete room data");
 };
 
 // Function:
@@ -272,8 +272,6 @@ wss.on("connection", function(ws) {
     var l = p['UserLimit'];	
     var d = p['UserID']
     var n = p['Name']
-  ws.send(JSON.stringify("Show something hey~"));
-  AddLog(ws,"On connection haha");
       // Message as command package
       if (r == "Server") {
           if (t == "CreateRoom") {
@@ -285,7 +283,7 @@ wss.on("connection", function(ws) {
           } else if (t == "RefreshRoommateList") {
 		RefreshRoommateList(ws,m);		  
           } else if (t == "LeaveRoom") {
-	AddLog("try to leave room");
+	AddLog(ws,"try to leave room");
 		LeaveRoom(ws,m,"request");
           } else if (t == "LockRoom") {
 		LockRoom(ws,m,"request");
