@@ -24,6 +24,16 @@ var Rooms = {};
 var RoomsArr = [];
 var LoginCnt = 0;
 
+// Function:
+var AddLog = function(logmsg) {
+      // Build FunctionPackage for adding log
+      var FnPkg_WS = [];
+      FnPkg_WS[0] = "AddLog";
+      FnPkg_WS[1] = logmsg;
+      y = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg_WS)};
+      ws.send(JSON.stringify(y));
+};
+
 // Function
 var CreateRoom = function(ws, loginpkg, userid, roomname,userlimit,username) {
       // set properties of my ws
@@ -154,12 +164,14 @@ var LeaveRoom = function(ws,roomname,reason) {
 	    //clean room name
 	    ws.room = "";
 	    var indexR = Rooms[roomname].wsgroup.indexOf(ws);
+	AddLog("Clean room name");
 	    // Build FunctionPackage for ws
 	    var FnPkg_WS = [];
 	    FnPkg_WS[0] = "Roommates_Leave"
 	    FnPkg_WS[1] = ws.loginpkg
 	    FnPkg_WS[2] = reason	
 	    y = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg_WS)};
+	AddLog("Build Roommates_Leave pkg");
 	    // Broadcast Leaving message to everyone else.
 	    Rooms[roomname].wsgroup.forEach(function each(client) {
 		// check if the clients are roomates.
@@ -167,6 +179,7 @@ var LeaveRoom = function(ws,roomname,reason) {
 		  client.send(JSON.stringify(y));
 		}
 	    });
+	AddLog("Broadcast roommates leave");
 	    //Delete Room data. 
 	    Rooms[roomname].wsgroup.splice(indexR, 1);
 	    Rooms[roomname].UserCnt = Rooms[roomname].UserCnt - 1;
@@ -174,6 +187,7 @@ var LeaveRoom = function(ws,roomname,reason) {
 		delete Rooms[roomname];
 	    	RoomsArr.splice(RoomsArr.indexOf(roomname), 1);
 	    }
+	AddLog("Delete room data");
 };
 
 // Function:
