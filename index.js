@@ -162,6 +162,7 @@ var RefreshRoomsList = function(ws) {
 // Function:
 var LeaveRoom = function(ws,roomname,reason) {
 	    //clean room name
+	AddLog("Start Clean room name");
 	    ws.room = "";
 	    var indexR = Rooms[roomname].wsgroup.indexOf(ws);
 	AddLog("Clean room name");
@@ -282,6 +283,7 @@ wss.on("connection", function(ws) {
           } else if (t == "RefreshRoommateList") {
 		RefreshRoommateList(ws,m);		  
           } else if (t == "LeaveRoom") {
+	AddLog("try to leave room");
 		LeaveRoom(ws,m,"request");
           } else if (t == "LockRoom") {
 		LockRoom(ws,m,"request");
