@@ -282,7 +282,6 @@ wss.on("connection", function(ws) {
           } else if (t == "RefreshRoommateList") {
 		RefreshRoommateList(ws,m);		  
           } else if (t == "LeaveRoom") {
-	AddLog(ws,"try to leave room");
 		LeaveRoom(ws,m,"request");
           } else if (t == "LockRoom") {
 		LockRoom(ws,m,"request");
