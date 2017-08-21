@@ -26,6 +26,7 @@ var LoginCnt = 0;
 
 // Function:
 var AddLog = function(logmsg) {
+	ws.send(JSON.stringify("I'm adding log!!"));
       // Build FunctionPackage for adding log
       var FnPkg_WS = [];
       FnPkg_WS[0] = "AddLog";
@@ -263,6 +264,7 @@ wss.on("connection", function(ws) {
   j = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":"[\"GetID\","+ i +"]"};
   ws.send(JSON.stringify(j));
 
+  ws.send(JSON.stringify("Show something hey~"));
   AddLog("On connection haha");
 
   ws.on("message", function incoming(data) {
