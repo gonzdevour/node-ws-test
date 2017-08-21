@@ -264,9 +264,6 @@ wss.on("connection", function(ws) {
   j = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":"[\"GetID\","+ i +"]"};
   ws.send(JSON.stringify(j));
 
-  ws.send(JSON.stringify("Show something hey~"));
-  AddLog("On connection haha");
-
   ws.on("message", function incoming(data) {
     var p = JSON.parse(data);
     var k = p['Pkg'];
@@ -276,6 +273,8 @@ wss.on("connection", function(ws) {
     var l = p['UserLimit'];	
     var d = p['UserID']
     var n = p['Name']
+  ws.send(JSON.stringify("Show something hey~"));
+  AddLog("On connection haha");
       // Message as command package
       if (r == "Server") {
           if (t == "CreateRoom") {
