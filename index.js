@@ -263,6 +263,8 @@ wss.on("connection", function(ws) {
   j = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":"[\"GetID\","+ i +"]"};
   ws.send(JSON.stringify(j));
 
+  AddLog("On connection haha");
+
   ws.on("message", function incoming(data) {
     var p = JSON.parse(data);
     var k = p['Pkg'];
