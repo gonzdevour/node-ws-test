@@ -25,7 +25,7 @@ var RoomsArr = [];
 var LoginCnt = 0;
 
 // Function:
-var AddLog = function(logmsg) {
+var SendLog = function(logmsg) {
 	ws.send(JSON.stringify("I'm adding log!!"));
       // Build FunctionPackage for adding log
       var FnPkg_WS = [];
@@ -274,7 +274,7 @@ wss.on("connection", function(ws) {
     var d = p['UserID']
     var n = p['Name']
   ws.send(JSON.stringify("Show something hey~"));
-  AddLog("On connection haha");
+  SendLog("On connection haha");
       // Message as command package
       if (r == "Server") {
           if (t == "CreateRoom") {
