@@ -47,6 +47,7 @@ var CreateRoom = function(ws, loginpkg, userid, roomname,userlimit,username) {
 	  Rooms[roomname].wsgroup.push(ws);
 	  Rooms[roomname].UserCnt = 1;
 	  Rooms[roomname].UserLimit = userlimit;
+	  Rooms[roomname].HostUserID = userid;
 	  Rooms[roomname].Hostname = username;
 	  Rooms[roomname].RoomInfoPkg = loginpkg;
 	  RoomsArr.push(roomname);
@@ -69,6 +70,7 @@ var JoinRoom = function(ws, loginpkg, userid, roomname,userlimit,username) {
 	  Rooms[roomname].wsgroup.push(ws);
 	  Rooms[roomname].UserCnt = 1;
 	  Rooms[roomname].UserLimit = userlimit;
+	  Rooms[roomname].HostUserID = userid;
 	  Rooms[roomname].Hostname = username;
 	  Rooms[roomname].RoomInfoPkg = loginpkg;
 	  Rooms[roomname].State = "Open";
@@ -151,6 +153,7 @@ var RefreshRoomsList = function(ws) {
 		p["UserCnt"] = Rooms[roomname].UserCnt;
 		p["UserLimit"] = Rooms[roomname].UserLimit;
 		p["State"] = Rooms[roomname].State;
+		p["HostUserID"] = Rooms[roomname].HostUserID;
 		p["HostName"] = Rooms[roomname].Hostname;
 		p["RoomInfoPkg"] = Rooms[roomname].RoomInfoPkg;
 		var FnPkg = [];
