@@ -48,6 +48,7 @@ var CreateRoom = function(ws, loginpkg, userid, roomname,userlimit,username) {
 	  Rooms[roomname].UserCnt = 1;
 	  Rooms[roomname].UserLimit = userlimit;
 	  Rooms[roomname].Hostname = username;
+	  Rooms[roomname].RoomInfoPkg = loginpkg;
 	  RoomsArr.push(roomname);
 	  JoinRoomAccept(ws,roomname);
       } else { 
@@ -69,6 +70,7 @@ var JoinRoom = function(ws, loginpkg, userid, roomname,userlimit,username) {
 	  Rooms[roomname].UserCnt = 1;
 	  Rooms[roomname].UserLimit = userlimit;
 	  Rooms[roomname].Hostname = username;
+	  Rooms[roomname].RoomInfoPkg = loginpkg;
 	  Rooms[roomname].State = "Open";
 	  RoomsArr.push(roomname);
 	  JoinRoomAccept(ws,roomname);
@@ -158,6 +160,7 @@ var RefreshRoomsList = function(ws) {
 		FnPkg[4] = Rooms[roomname].UserLimit;
 		FnPkg[5] = Rooms[roomname].State;
 		FnPkg[6] = Rooms[roomname].Hostname;
+		FnPkg[7] = Rooms[roomname].RoomInfoPkg;
 		u = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg)};
 		ws.send(JSON.stringify(u));
 	});
