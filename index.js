@@ -21,6 +21,7 @@ var Game_Name = ""
 //simple storage.
 var clients = [];
 var Rooms = {};
+var RoomID = 0;
 var RoomsArr = [];
 var LoginCnt = 0;
 
