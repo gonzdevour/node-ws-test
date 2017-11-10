@@ -184,10 +184,10 @@ var LeaveRoom = function(ws,roomname,reason) {
 			y = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg_WS)};
 			// Broadcast Leaving message to everyone else.
 			Rooms[roomname].wsgroup.forEach(function each(client) {
-			// check if the clients are roomates.
-			if (client.readyState === client.OPEN) {
-			  client.send(JSON.stringify(y));
-			}
+				// check if the clients are roomates.
+				if (client.readyState === client.OPEN) {
+					client.send(JSON.stringify(y));
+				}
 			});
 			//Delete Room data. 
 			Rooms[roomname].wsgroup.splice(indexR, 1);
@@ -195,6 +195,17 @@ var LeaveRoom = function(ws,roomname,reason) {
 		    	AddLog(ws,("HostUserID=" + Rooms[roomname].HostUserID))
 		    	AddLog(ws,("LeaverID=" + ws.userid))
 			if (Rooms[roomname].HostUserID == ws.userid) {
+				// Build FunctionPackage for ws
+				var FnPkg_WS = [];
+				FnPkg_WS[0] = "RoomDeleted"
+				y = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg_WS)};
+				// Delete client room variable to prevent interruption by same room name
+				Rooms[roomname].wsgroup.forEach(function each(client) {
+					// check if the clients are roomates.
+					if (client.readyState === client.OPEN) {
+						client.send(JSON.stringify(y));
+					}
+				});	
 				delete Rooms[roomname];
 				AddLog(ws,("delete room:" + roomname))
 				RoomsArr.splice(RoomsArr.indexOf(roomname), 1);
