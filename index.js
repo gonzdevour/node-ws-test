@@ -192,8 +192,11 @@ var LeaveRoom = function(ws,roomname,reason) {
 			//Delete Room data. 
 			Rooms[roomname].wsgroup.splice(indexR, 1);
 			Rooms[roomname].UserCnt = Rooms[roomname].UserCnt - 1;
+		    	AddLog(ws,("HostUserID=" + Rooms[roomname].HostUserID))
+		    	AddLog(ws,("LeaverID=" + ws.userid))
 			if (Rooms[roomname].HostUserID == ws.userid) {
 				delete Rooms[roomname];
+				AddLog(ws,("delete room:" + roomname))
 				RoomsArr.splice(RoomsArr.indexOf(roomname), 1);
 			}
 	    }
