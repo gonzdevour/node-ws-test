@@ -189,27 +189,6 @@ var LeaveRoom = function(ws,roomname,reason) {
 					client.send(JSON.stringify(y));
 				}
 			});
-			//Delete Room data. 
-			Rooms[roomname].wsgroup.splice(indexR, 1);
-			Rooms[roomname].UserCnt = Rooms[roomname].UserCnt - 1;
-		    	AddLog(ws,("HostUserID=" + Rooms[roomname].HostUserID))
-		    	AddLog(ws,("LeaverID=" + ws.userid))
-			if (roomname != "Public" && Rooms[roomname].HostUserID == ws.userid) {
-				// Build FunctionPackage for ws
-				var FnPkg_WS = [];
-				FnPkg_WS[0] = "RoomDeleted"
-				y = { "LTD":LTD_ID,"Game":Game_Name,"Pkg":JSON.stringify(FnPkg_WS)};
-				// Delete client room variable to prevent interruption by same room name
-				Rooms[roomname].wsgroup.forEach(function each(client) {
-					// check if the clients are roomates.
-					if (client.readyState === client.OPEN) {
-						client.send(JSON.stringify(y));
-					}
-				});	
-				//delete Rooms[roomname];
-				AddLog(ws,("delete room:" + roomname))
-				RoomsArr.splice(RoomsArr.indexOf(roomname), 1);
-			}
 	    }
 };
 
@@ -329,7 +308,7 @@ wss.on("connection", function(ws) {
 			// Notice that if you didn't join any chatroom, ws.room is null.
 			// You have to check your variable null or not before manipulating them to prevent your server broken.
 			if (!!ws.room) {
-				//LeaveRoom(ws,ws.room,"LeftGame");
+				LeaveRoom(ws,ws.room,"LeftGame");
 			}
 			//Clean
 			var index = clients.indexOf(ws);
