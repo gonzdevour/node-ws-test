@@ -206,7 +206,7 @@ var LeaveRoom = function(ws,roomname,reason) {
 						client.send(JSON.stringify(y));
 					}
 				});	
-				delete Rooms[roomname];
+				//delete Rooms[roomname];
 				AddLog(ws,("delete room:" + roomname))
 				RoomsArr.splice(RoomsArr.indexOf(roomname), 1);
 			}
