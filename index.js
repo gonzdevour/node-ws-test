@@ -329,7 +329,7 @@ wss.on("connection", function(ws) {
 			// Notice that if you didn't join any chatroom, ws.room is null.
 			// You have to check your variable null or not before manipulating them to prevent your server broken.
 			if (!!ws.room) {
-				LeaveRoom(ws,ws.room,"LeftGame");
+				//LeaveRoom(ws,ws.room,"LeftGame");
 			}
 			//Clean
 			var index = clients.indexOf(ws);
