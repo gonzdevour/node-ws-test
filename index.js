@@ -194,7 +194,7 @@ var LeaveRoom = function(ws,roomname,reason) {
 			Rooms[roomname].UserCnt = Rooms[roomname].UserCnt - 1;
 		    	AddLog(ws,("HostUserID=" + Rooms[roomname].HostUserID))
 		    	AddLog(ws,("LeaverID=" + ws.userid))
-			if (Rooms[roomname].HostUserID == ws.userid) {
+			if (roomname != "Public" && Rooms[roomname].HostUserID == ws.userid) {
 				// Build FunctionPackage for ws
 				var FnPkg_WS = [];
 				FnPkg_WS[0] = "RoomDeleted"
