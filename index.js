@@ -189,6 +189,11 @@ var LeaveRoom = function(ws,roomname,reason) {
 					client.send(JSON.stringify(y));
 				}
 			});
+			//Delete Room data. 
+			Rooms[roomname].wsgroup.splice(indexR, 1);
+			Rooms[roomname].UserCnt = Rooms[roomname].UserCnt - 1;
+		    	AddLog(ws,("HostUserID=" + Rooms[roomname].HostUserID))
+		    	AddLog(ws,("LeaverID=" + ws.userid))
 	    }
 };
 
